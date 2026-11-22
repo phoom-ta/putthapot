@@ -176,7 +176,17 @@ details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
 .pr-row.B .pl{border-left-color:var(--buddha)} .pr-row.O .pl{border-left-color:var(--other)} .pr-row.O .tl{color:var(--other)} .pr-row.N .tl{color:var(--muted)}
 .pr-row .sid{display:block;font:500 .7rem var(--f-mono);color:var(--muted)}
 .pr-row .pp{display:block;font-family:var(--f-pali)}
-.pr-row .pe{display:block;font-size:.8rem;color:var(--muted)} .pr-row .pe.ne{font-style:italic;color:var(--warn)}
+.pr-row .pe{display:block;font-size:.8rem;color:var(--muted)}
+.pr-row .pe.ne{font-style:italic;color:var(--muted);opacity:.78;font-size:.76rem}
+.pr-row .pe.pe-ref{font-style:italic;color:var(--muted)}
+.pr-row .pe.pe-ref b{font-style:normal;font-weight:600;color:var(--accent)}
+.title-hits{border-left:4px solid var(--accent);background:var(--bg)}
+.title-hits h3{font-size:.95rem;margin-bottom:8px}
+.title-list{display:flex;flex-wrap:wrap;gap:6px 10px}
+.title-pill{display:inline-flex;align-items:baseline;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;font-size:.86rem}
+.title-pill:hover{border-color:var(--accent);color:var(--accent)}
+.title-pill .tid{font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.title-pill .tsub{font-size:.76rem;color:var(--muted)}
 .pr-row .mg{color:var(--muted)}
 .pr-row.H>div{background:var(--bg);font-size:.85rem;color:var(--muted)} .pr-row .hh{font-size:.74rem;font-weight:600}
 .pr-row.focusp>div{background:color-mix(in srgb,var(--accent) 12%, transparent)}
@@ -745,7 +755,7 @@ details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
   </header>
 
   <form class="searchbar" id="sf" role="search">
-    <input type="search" id="q" placeholder="ค้นคำไทย เช่น วิญญาณ, อนาคามี, ปรินิพพานในระหว่าง" aria-label="คำค้น" autocomplete="off">
+    <input type="search" id="q" placeholder="ค้นคำไทย หรือชื่อพระสูตร เช่น เวลามสูตร, สติปัฏฐาน, an9.20" aria-label="คำค้น" autocomplete="off">
     <select id="lang" aria-label="ค้นในภาษา">
       <option value="th">ไทย (ฉบับหลวง)</option><option value="p">บาลี</option><option value="e">อังกฤษ</option>
     </select>
@@ -961,6 +971,51 @@ function hlFold(html, term){
   let out = '', last = 0, from = 0, pos;
   while((pos = f.indexOf(t, from)) !== -1){ const a = map[pos], b = map[pos+t.length-1]+1; if(a < last){ from = pos+1; continue; } out += html.slice(last,a)+'<mark>'+html.slice(a,b)+'</mark>'; last = b; from = pos+t.length; }
   return out + html.slice(last);
+}
+function buildEnMap(segs){
+  const normP = p => (p||'')
+    .replace(/^\s*(?:\(…\)|…)\s*/,'')
+    .replace(/^ya(?:ñca|ṁ)\b/i,'yaṁ')
+    .replace(/[\s“”‘’\.,;:\-\—\(\)…]+/g,' ')
+    .trim().toLowerCase().slice(0,44);
+  const normE = e => (e||'').replace(/\W+/g,' ').trim().toLowerCase().slice(0,28);
+  const seen = new Map(), out = new Array(segs.length).fill(null);
+  let inUddana = false;
+
+  for(let k=0; k<segs.length; k++){
+    const sg = segs[k], pk = normP(sg.p);
+    if(sg.e){
+      if(pk && !seen.has(pk)) seen.set(pk, {id: sg.i, e: sg.e});
+      else if(pk && seen.has(pk)){
+        const prev = seen.get(pk);
+        if(normE(prev.e) !== normE(sg.e) && segs[k+1] && !segs[k+1].e){
+          let endK = k + 1;
+          while(endK + 1 < segs.length && !segs[endK + 1].e && segs[endK + 1].s !== 'H' && !/(uddānaṁ|vaggo|niṭṭhitaṁ|samattaṁ|dasamo|paṭhamo|dutiyo)$/i.test(segs[endK + 1].p||'')) endK++;
+          out[endK] = `<span class="pe pe-ref"><b>สรุปความช่วงย่อ</b> · ${esc(sg.e)}</span>`;
+          out[k] = `<span class="pe pe-ref"><b>↻ ทวนความจาก ${esc(prev.id)}</b> · ${esc(prev.e)}</span>`;
+          continue;
+        }
+      }
+      out[k] = `<span class="pe">${esc(sg.e)}</span>`;
+    }
+  }
+
+  for(let k=0; k<segs.length; k++){
+    if(out[k]) continue;
+    const sg = segs[k], p = (sg.p||'').trim(), pk = normP(p);
+    if(/Tassuddānaṁ/i.test(p)) inUddana = true;
+    if(inUddana || /(uddānaṁ|vaggo|niṭṭhitaṁ|samattaṁ|paṭhamo|dutiyo|tatiyo|catuttho|pañcamo|chaṭṭho|sattamo|aṭṭhamo|navamo|dasamo)$/i.test(p)){
+      out[k] = '<span class="pe ne">คาถาอุททาน / สรุปท้ายวรรค</span>';
+    } else if(pk && seen.has(pk)){
+      const ref = seen.get(pk);
+      out[k] = `<span class="pe pe-ref"><b>↻ ทวนความจาก ${esc(ref.id)}</b> · ${esc(ref.e)}</span>`;
+    } else if(/pe…|…pe/.test(p)){
+      out[k] = '<span class="pe ne">… ย่อความ (…pe…)</span>';
+    } else {
+      out[k] = '<span class="pe ne">〃 รวมความในท่อนข้างเคียง</span>';
+    }
+  }
+  return out;
 }
 function segHTML(seg, prev, terms){
   const c = cls(seg); if(c==='H') return '';
@@ -1219,6 +1274,7 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
       const headRows = upto => { let r = ''; while(hi < heads.length && heads[hi][0] < upto){ const t = X.slice(heads[hi][0], heads[hi][1]).trim(); if(t) r += `<div class="pr-row H"><div class="pl"><span class="sid">ไม่มีในบาลี</span></div><div class="tl"><span class="hh">หัวข้อที่ผู้แปลฉบับหลวงเติม:</span> ${esc(t)}</div></div>`; hi++; } return r; };
       const secIdx = {}; (meta.sec||[]).forEach((sc,n) => secIdx[sc.i] = n);
       let cur = 0, h = `<div class="focusnote" style="margin-bottom:8px">จับคู่ท่อนบาลีกับประโยคไทยอัตโนมัติ (Phase 3A) · ช่องไทยที่ว่าง = ไทยรวมอยู่กับท่อนข้างเคียง · ถ้าเห็นคู่ที่คลาด แจ้งรหัสท่อนด้านซ้ายใน 📮 แบบ [จับคู่]</div>` + (curSec!=null ? navHTML() : '') + '<div class="par">';
+      const enMap = buildEnMap(segs);
       segs.forEach((sg, k) => {
         if(sg.i in secIdx) cur = secIdx[sg.i];
         if(curSec!=null && cur!==curSec) return;
@@ -1226,7 +1282,7 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
         if(sg.s === 'H' || sg.i.split(':')[1].startsWith('0.')) return;
         const c = cls(sg), sp = span[k], th = sp ? X.slice(sp[0], sp[1]).trim() : '';
         if(sp) h += headRows(sp[0]);
-        h += `<div class="pr-row ${c === 'B' ? 'B' : c === 'O' ? 'O' : 'N'}" data-k="${k}" id="pt-${esc(sg.i)}"><div class="pl"><span class="sid">${esc(sg.i)}${c !== 'B' && (whoLabel(sg) || [''])[0] ? ' · ' + esc((whoLabel(sg) || [''])[0]) : ''}${trnBadge((state.trnSeg || {})[sg.i])}<button type="button" class="cpseg" data-cp="${esc(sg.i)}" title="คัดลอกรหัสท่อนและข้อความบาลี–ไทย">คัดลอก</button></span><span class="pp">${esc(sg.p)}</span>${sg.e ? `<span class="pe">${esc(sg.e)}</span>` : '<span class="pe ne">ไม่มีคำแปลอังกฤษ</span>'}</div><div class="tl" lang="th"${th ? ` data-o="${sp[0] + (X.slice(sp[0], sp[1]).match(/^\s*/)[0].length)}"` : ''}>${th ? thaiChunk(th, false) : '<span class="mg">〃</span>'}</div></div>`;
+        h += `<div class="pr-row ${c === 'B' ? 'B' : c === 'O' ? 'O' : 'N'}" data-k="${k}" id="pt-${esc(sg.i)}"><div class="pl"><span class="sid">${esc(sg.i)}${c !== 'B' && (whoLabel(sg) || [''])[0] ? ' · ' + esc((whoLabel(sg) || [''])[0]) : ''}${trnBadge((state.trnSeg || {})[sg.i])}<button type="button" class="cpseg" data-cp="${esc(sg.i)}" title="คัดลอกรหัสท่อนและข้อความบาลี–ไทย">คัดลอก</button></span><span class="pp">${esc(sg.p)}</span>${enMap[k]}</div><div class="tl" lang="th"${th ? ` data-o="${sp[0] + (X.slice(sp[0], sp[1]).match(/^\s*/)[0].length)}"` : ''}>${th ? thaiChunk(th, false) : '<span class="mg">〃</span>'}</div></div>`;
       });
       body.innerHTML = h + '</div>' + (curSec!=null ? navHTML() : ''); bindNav();
       if(nTrn) markTrn(body, id, meta.th[1][0]);
@@ -1356,6 +1412,30 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
   if(!focusSeg && !term) window.scrollTo({top: $('.grid').offsetTop - 10});
 }
 
+function matchSuttaTitles(raw){
+  const qTh = qThai(raw), qEn = fold(raw).trim();
+  if(!qTh && !qEn) return [];
+  const hits = [];
+  for(const m of state.index){
+    const idMatch = qEn && fold(m.id).includes(qEn);
+    const thMatch = qTh && m.tt && qThai(m.tt).includes(qTh);
+    const paMatch = qEn && ((m.tp && fold(m.tp).includes(qEn)) || (m.te && fold(m.te).includes(qEn)));
+    const secMatch = (m.sec||[]).find(sc => (qTh && sc.h && qThai(sc.h).includes(qTh)) || (qEn && sc.hp && fold(sc.hp).includes(qEn)));
+    if(idMatch || thMatch || paMatch || secMatch){
+      hits.push({m, sec: secMatch ? m.sec.indexOf(secMatch) : null, secName: secMatch ? (secMatch.h || secMatch.hp) : ''});
+    }
+  }
+  return hits;
+}
+function renderTitleHits(titleHits){
+  if(!titleHits.length) return '';
+  const pills = titleHits.slice(0, 30).map(({m, sec, secName}) => {
+    const vInfo = m.th ? ` · เล่ม ${tdig(m.th[0])}` : '';
+    const sub = secName ? ` · ตอน ${esc(secName)}` : (m.tp ? ` · ${esc(m.tp)}` : '');
+    return `<a class="title-pill" href="#${toHash(m.id)}"${sec!=null?` data-sec="${sec}"`:''}><span class="tid">${esc(m.id)}</span><b>${esc(m.tt || m.tp)}</b><span class="tsub">${sub}${vInfo}</span></a>`;
+  }).join('');
+  return `<section class="card rs title-hits"><h3>ชื่อพระสูตรที่ตรงกับคำค้น (${tdig(titleHits.length)} สูตร${titleHits.length>30?' · แสดง ๓๐ สูตรแรก':''})</h3><div class="title-list">${pills}</div></section>`;
+}
 async function search(){
   const raw = $('#q').value.trim(); if(!raw) return;
   const lang = $('#lang').value, who = $('#who').value;
@@ -1376,8 +1456,10 @@ async function search(){
     });
     if(hits.length){ results.push([meta, hits]); segCount += hits.length; }
   }
-  $('#status').textContent = results.length ? `พบ ${segCount} ท่อน ใน ${results.length} สูตร` : 'ไม่พบ ลองใช้รากศัพท์สั้นลง หรือเปลี่ยนตัวกรองผู้พูด';
-  let html = '<div class="res">';
+  const titleHits = matchSuttaTitles(raw);
+  const tNote = titleHits.length ? `พบชื่อพระสูตรตรงกัน ${tdig(titleHits.length)} สูตร · ` : '';
+  $('#status').textContent = (results.length || titleHits.length) ? `${tNote}${results.length ? `เนื้อความพบ ${tdig(segCount)} ท่อน ใน ${tdig(results.length)} สูตร` : 'ไม่พบในเนื้อความ'}` : 'ไม่พบ ลองใช้รากศัพท์สั้นลง หรือเปลี่ยนตัวกรองผู้พูด';
+  let html = '<div class="res">' + renderTitleHits(titleHits);
   results.slice(0,120).forEach(([meta, hits]) => {
     html += `<section class="card rs"><h3><a href="#${toHash(meta.id)}">${label(meta.id)} · ${esc(meta.tt||meta.tp)}</a></h3><div class="where">${esc(meta.tp)} · ${esc(meta.te)}</div>`;
     let prev=null; hits.slice(0,5).forEach(sg => { html += segHTML(sg, prev, terms); prev = sg; });
@@ -1407,6 +1489,12 @@ function restoreSearch(fresh){
   $('#main').innerHTML = ls.html; $('#status').textContent = ls.status;
   document.querySelectorAll('.slist a.on').forEach(a=>a.classList.remove('on'));
   bindResults();
+  $('#main').querySelectorAll('.title-pill').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); ls.y = window.scrollY; state.fromSearch = true;
+    pendingTerm = null; pendingFocus = null;
+    pendingSec = a.dataset.sec != null ? +a.dataset.sec : null;
+    go(fromHash(a.getAttribute('href').slice(1)));
+  }));
   if(!fresh) window.scrollTo({top: ls.y});
 }
 
@@ -1446,8 +1534,10 @@ async function searchThai(raw, who){
       });
     });
   }
-  $('#status').textContent = out.length ? `พบ ${tdig(total)} แห่ง ใน ${tdig(out.length)} ตอน${who==='A'?' (เฉพาะสูตรที่มีพระดำรัส)':who==='AU'?' (สูตรที่มีพระดำรัส หรือคาถาที่ไม่ระบุผู้กล่าว)':''}${filtered?` · มัชฌิมนิกายกรองรายประโยค: ตัดออก ${tdig(filtered)} แห่งที่ไม่ใช่พระดำรัส${who==='AB'?'':' (รวมที่ยังไม่ระบุ)'}`:''}` : 'ไม่พบ ลองพิมพ์คำให้สั้นลง หรือสะกดอีกแบบ (ฉบับหลวงใช้ตัวสะกดเก่าบางคำ เช่น ทิฐิ)';
-  let html = '<div class="res">';
+  const titleHits = matchSuttaTitles(raw);
+  const tNote = titleHits.length ? `พบชื่อพระสูตรตรงกัน ${tdig(titleHits.length)} สูตร · ` : '';
+  $('#status').textContent = (out.length || titleHits.length) ? `${tNote}${out.length ? `เนื้อความพบ ${tdig(total)} แห่ง ใน ${tdig(out.length)} ตอน${who==='A'?' (เฉพาะสูตรที่มีพระดำรัส)':who==='AU'?' (สูตรที่มีพระดำรัส หรือคาถาที่ไม่ระบุผู้กล่าว)':''}${filtered?` · กรองรายประโยค: ตัดออก ${tdig(filtered)} แห่งที่ไม่ใช่พระดำรัส${who==='AB'?'':' (รวมที่ยังไม่ระบุ)'}`:''}` : 'ไม่พบในเนื้อความ'}` : 'ไม่พบ ลองพิมพ์คำให้สั้นลง หรือสะกดอีกแบบ (ฉบับหลวงใช้ตัวสะกดเก่าบางคำ เช่น ทิฐิ)';
+  let html = '<div class="res">' + renderTitleHits(titleHits);
   out.slice(0,150).forEach(r => {
     const id = r.sc[0] ? r.sc[0].id : null;
     const where = `ฉบับหลวง เล่ม ${tdig(r.v)}${r.u.pg?` หน้า ${tdig(r.u.pg[0])}`:''}${r.u.k?` ข้อ ${tdig(r.u.k[0])}${r.u.k[1]!==r.u.k[0]?'–'+tdig(r.u.k[1]):''}`:''}`;
