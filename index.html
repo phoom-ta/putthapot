@@ -1,119 +1,2168 @@
-<!DOCTYPE html>
-<html lang="th" data-theme="parchment">
+<!doctype html>
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>พุทธพจน์ UI v5 — ระบบศึกษาพระดำรัสและแผนภาพวงจรธรรม</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ห้องอ่านพุทธพจน์ · Gemini Edition</title>
+<script>(function(){var t='dark';try{t=localStorage.getItem('pk-theme')||'dark'}catch(e){}document.documentElement.setAttribute('data-theme',t)})()</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+[hidden]:not([hidden=until-found i]){display:none!important}
+/* layout: แถบค้นด้านบน + สองคอลัมน์ (สารบัญ | ผู้อ่าน) ซ้อนเป็นคอลัมน์เดียวบนมือถือ; ภาษาไทยเป็นหลัก บาลีเป็นแท็บรอง */
+:root{
+  --bg:#f5f6f2; --panel:#ffffff; --ink:#1f2a24; --muted:#5f6b64; --line:#dde2da;
+  --accent:#2f5d50;
+  --buddha:#b8660b; --buddha-soft:#fbefdc;
+  --endorse:#7a5a00; --endorse-soft:#f6edc4;
+  --other:#4a5a8c; --other-soft:#e8ecf7;
+  --warn:#9a3b1e; --unattr:#7b3f99; --warn-soft:#fbe9e2;
+  --hl:#ffe08a;
+  --f-thai:"Sarabun","Noto Sans Thai",Tahoma,sans-serif;
+  --f-pali:"Gentium Book Plus","Noto Serif",Georgia,serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --panel:#1b211e; --ink:#e4e9e5; --muted:#9aa6a0; --line:#2c3531;
+  --accent:#7fb8a6; --buddha:#f0a54a; --buddha-soft:#33270f; --endorse:#e3c75a; --endorse-soft:#2f2a12;
+  --other:#9fb0e8; --other-soft:#1e2436; --warn:#f09a7a; --unattr:#cf9ee6; --warn-soft:#3a2119; --hl:#6b5512; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1b211e; --ink:#e4e9e5; --muted:#9aa6a0; --line:#2c3531;
+  --accent:#7fb8a6; --buddha:#f0a54a; --buddha-soft:#33270f; --endorse:#e3c75a; --endorse-soft:#2f2a12;
+  --other:#9fb0e8; --other-soft:#1e2436; --warn:#f09a7a; --unattr:#cf9ee6; --warn-soft:#3a2119; --hl:#6b5512; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-thai);font-size:16px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 48px}
+header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between;padding-block:4px 12px;border-bottom:1px solid var(--line)}
+h1{font-size:1.5rem;margin:0;font-weight:700;text-wrap:balance}
+.homelink{color:inherit;text-decoration:none;cursor:pointer}.homelink:hover,.homelink:focus-visible{text-decoration:underline;text-underline-offset:4px}
+h1 small{font-weight:400;color:var(--muted);font-size:.95rem;margin-left:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+.searchbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:14px}
+.searchbar input[type=search]{flex:1 1 260px;min-width:0;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+input:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select,button{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+.status{font-size:.85rem;color:var(--muted);min-height:1.4em}
+.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:10px;max-height:80vh;overflow:auto;position:sticky;top:env(safe-area-inset-top,0px)}
+@media (max-width:860px){.side{position:static;max-height:46vh}}
+.side h2{font-size:.8rem;letter-spacing:.06em;color:var(--muted);margin:0;padding:10px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.grp{border-bottom:1px solid var(--line)}
+.sub .grp{border-bottom:none;border-top:1px solid var(--line)}
+.sub .grp>button{padding-left:24px}
+.sub .slist a{padding-left:32px}
+.sectoc{margin:0 0 16px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.sectoc summary{cursor:pointer;padding:8px 12px;font-weight:600;color:var(--accent)}
+.sectoc ol{margin:0;padding:4px 12px 10px 2.4em;columns:2;column-gap:28px;font-size:.93rem}
+@media (max-width:640px){.sectoc ol{columns:1}}
+.sectoc li{break-inside:avoid;margin:2px 0}
+.sectoc a{color:var(--ink);text-decoration:none}
+.sectoc a:hover{color:var(--accent);text-decoration:underline}
+.sectoc .sp{font-size:.78rem;color:var(--muted)}
+.sectoc .tnote{font-size:.8rem;color:var(--muted);padding:0 12px 10px}
+.sechead{margin:1.6em 0 .6em;padding:8px 12px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 6px 6px 0}
+.sechead .t{font-weight:700;font-size:1.05rem}
+.sechead .m{font-size:.8rem;color:var(--muted)}
+.sechead .m b{color:var(--buddha);font-weight:600}
+.secnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+.secnav button{font-size:.88rem;padding:6px 10px}
+.secnav .where{font-size:.85rem;color:var(--muted);flex:1 1 200px}
+.backbtn{margin-bottom:12px;font-size:.92rem}
+.nkhead{font-size:.78rem;letter-spacing:.05em;color:var(--muted);padding:12px 14px 6px;background:var(--bg);border-bottom:1px solid var(--line)}
+.grp>button{all:unset;display:flex;gap:8px;width:100%;box-sizing:border-box;padding:9px 14px;cursor:pointer;justify-content:space-between;align-items:baseline}
+.grp>button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.gn{font-weight:600}
+.gp{font-family:var(--f-pali);color:var(--muted);font-size:.9rem}
+.gc{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);white-space:nowrap}
+.slist{list-style:none;margin:0;padding:0 0 6px}
+.slist a{display:flex;gap:8px;padding:5px 14px 5px 22px;text-decoration:none;color:var(--ink);font-size:.95rem;align-items:baseline}
+.slist a:hover{background:var(--bg)}
+.slist a.on{background:var(--buddha-soft)}
+.sid{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);min-width:5.4em}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--warn);flex:0 0 7px;align-self:center}
+.bar{flex:0 0 34px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;align-self:center}
+.bar i{display:block;height:100%;background:var(--buddha)}
+main{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.empty h2{margin:0 0 8px;font-size:1.15rem}
+.empty p{margin:.4em 0;max-width:65ch}
+code{font-family:var(--f-mono);font-size:.85em;background:var(--bg);padding:1px 5px;border-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips button{font-size:.92rem;padding:6px 10px}
+.sh h2{margin:0;font-size:1.45rem;text-wrap:balance}
+.sh .pt{font-family:var(--f-pali);font-style:italic;color:var(--muted);font-size:1rem}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.88rem;color:var(--muted);margin:8px 0 10px}
+.meta a{color:var(--accent)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.pill{font-size:.82rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);background:var(--bg)}
+.pill.b{border-color:var(--buddha);color:var(--buddha);background:var(--buddha-soft)}
+.pill.q{border-color:var(--endorse);color:var(--endorse);background:var(--endorse-soft)}
+.pill.w{border-color:var(--warn);color:var(--warn);background:var(--warn-soft)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button[aria-selected=true]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+/* Gemini Edition: โหมดกรองพุทธพจน์ + คู่ขนานบาลี-ไทย + ปุ่มคัดลอกท่อน */
+.bfltbar{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.84rem;color:var(--muted);margin:0 0 12px;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.bfltbar .lbl{font-weight:600;color:var(--ink)}
+.bfltgrp{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}
+.bfltgrp button{border:0;border-right:1px solid var(--line);border-radius:0;padding:4px 10px;font-size:.82rem;background:transparent;color:var(--muted);cursor:pointer}
+.bfltgrp button:last-child{border-right:0}
+.bfltgrp button.on{background:var(--buddha);color:#fff;font-weight:600}
+.bfltbar .en-tog{margin-left:auto;display:inline-flex;gap:5px;align-items:center;color:var(--ink);cursor:pointer;font-size:.82rem}
+#tabbody.bf-dim .seg.O,#tabbody.bf-dim .seg.N{opacity:.32;transition:opacity .15s}
+#tabbody.bf-dim .seg.O:hover,#tabbody.bf-dim .seg.N:hover{opacity:.95}
+#tabbody.bf-dim .pr-row.O>div,#tabbody.bf-dim .pr-row.N>div{opacity:.32;transition:opacity .15s}
+#tabbody.bf-dim .pr-row.O:hover>div,#tabbody.bf-dim .pr-row.N:hover>div{opacity:.95}
+#tabbody.bf-dim .thai .sp.O,#tabbody.bf-dim .thai .sp.N,#tabbody.bf-dim .thai .sp.U{opacity:.32;transition:opacity .15s}
+#tabbody.bf-dim .thai .sp.O:hover,#tabbody.bf-dim .thai .sp.N:hover,#tabbody.bf-dim .thai .sp.U:hover{opacity:.95}
+#tabbody.bf-only .seg:not(.B){display:none}
+#tabbody.bf-only .pr-row:not(.B):not(.H){display:none}
+#tabbody.bf-only .thai .sp.O,#tabbody.bf-only .thai .sp.N,#tabbody.bf-only .thai .sp.U{opacity:.18;font-size:.88em}
+#tabbody.bf-only .pblk.no-b{display:none}
+#tabbody.hide-en .pe,#tabbody.hide-en .seg .e{display:none}
+.cpseg{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:4px;padding:1px 6px;font:500 .68rem var(--f-thai);cursor:pointer;margin-left:6px;vertical-align:middle}
+.cpseg:hover{border-color:var(--accent);color:var(--accent)}
+.cpseg.ok{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.thai{font-size:1.08rem;line-height:1.95;max-width:72ch}
+.thai p{margin:0 0 .75em}
+.thai .kho{font-family:var(--f-mono);font-size:.78rem;color:var(--accent);margin-right:4px}
+.thai h3{font-size:1rem;margin:1.2em 0 .4em;color:var(--muted)}
+.thai .gloss{color:var(--muted);font-style:italic}
+.thai .sp.O{color:var(--other)}
+.thai .sp.N{color:var(--muted)}
+.thai .sp.U{color:var(--unattr)}
+.thai .sp.H{color:var(--muted);font-weight:600}
+.thai .sp.Q{text-decoration:underline dotted var(--warn);text-decoration-thickness:1.5px;text-underline-offset:5px}
+.thai.nospk .sp{color:inherit;text-decoration:none;font-weight:inherit}
+.spkbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.85rem;color:var(--muted);margin:0 0 12px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.spkbar label{display:inline-flex;gap:6px;align-items:center;color:var(--ink);font-weight:600;cursor:pointer}
+.spkbar .k{display:inline-flex;gap:5px;align-items:center}
+.spkbar .k i{font-style:normal}
+.spkbar .kO{color:var(--other)} .spkbar .kU{color:var(--unattr)} .spkbar .kN{color:var(--muted)} .spkbar .kQ{text-decoration:underline dotted var(--warn);text-underline-offset:4px}
+.rs .spk{font-weight:600}
+.thai p.focusp{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+.focusnote{font-size:.85rem;color:var(--muted);margin:0 0 10px;padding:6px 10px;border-left:3px solid var(--accent);background:var(--bg)}
+.warnbox{background:var(--warn-soft);border-left:4px solid var(--warn);padding:8px 12px;border-radius:6px;font-size:.9rem;margin-bottom:14px;max-width:72ch}
+.seg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 18px;padding:5px 10px 5px 12px;border-left:4px solid transparent}
+@media (max-width:640px){.seg{grid-template-columns:minmax(0,1fr)}}
+.seg.B{border-left-color:var(--buddha);background:var(--buddha-soft)}
+.seg.Bq{border-left-color:var(--endorse);background:var(--endorse-soft)}
+.seg.O{border-left-color:var(--other);background:var(--other-soft)}
+.seg.N{border-left-color:var(--line)}
+.seg.N .p,.seg.N .e{color:var(--muted)}
+.p{font-family:var(--f-pali);font-size:1.02rem}
+.e{font-size:.93rem}
+.who{grid-column:1/-1;font-size:.78rem;font-weight:600;margin-top:8px;display:flex;gap:8px;align-items:center}
+.who .tag{font-family:var(--f-mono);font-weight:500;padding:0 6px;border-radius:4px;border:1px solid currentColor}
+.seg.B .who{color:var(--buddha)} .seg.Bq .who{color:var(--endorse)} .seg.O .who{color:var(--other)}
+.segid{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);user-select:all}
+mark{background:var(--hl);color:inherit;border-radius:2px}
+.res{display:flex;flex-direction:column;gap:12px}
+.rs h3{margin:0 0 4px;font-size:1rem}
+.rs h3 a{color:var(--accent);text-decoration:none}
+.rs .where{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+.rs .snip{font-size:1rem;line-height:1.8;margin:.2em 0}
+.rs .seg{cursor:pointer}
+.note{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);margin-top:18px;padding-top:12px;max-width:80ch}
+details.help{margin-top:14px}
+details.help summary{cursor:pointer;color:var(--accent);font-weight:600}
+details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
+.par{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border-top:1px solid var(--line)}
+.pr-row{display:contents}
+.pr-row>div{padding:6px 10px;border-bottom:1px solid var(--line);font-size:.93rem;line-height:1.55}
+.pr-row .pl{border-left:3px solid var(--line)}
+.pr-row.B .pl{border-left-color:var(--buddha)} .pr-row.O .pl{border-left-color:var(--other)} .pr-row.O .tl{color:var(--other)} .pr-row.N .tl{color:var(--muted)}
+.pr-row .sid{display:block;font:500 .7rem var(--f-mono);color:var(--muted)}
+.pr-row .pp{display:block;font-family:var(--f-pali)}
+.pr-row .pe{display:block;font-size:.8rem;color:var(--muted)} .pr-row .pe.ne{font-style:italic;color:var(--warn)}
+.pr-row .mg{color:var(--muted)}
+.pr-row.H>div{background:var(--bg);font-size:.85rem;color:var(--muted)} .pr-row .hh{font-size:.74rem;font-weight:600}
+.pr-row.focusp>div{background:color-mix(in srgb,var(--accent) 12%, transparent)}
+@media (max-width:640px){.par{grid-template-columns:minmax(0,1fr)}.pr-row .tl{border-bottom:2px solid var(--line);padding-top:0}.pr-row .pl{border-bottom:0}}
+.pblk{position:relative;border-left:2px solid var(--line);padding:2px 0 2px 12px;margin:0 0 10px}
+.pblk:hover{border-left-color:var(--accent)}
+.pblk .pid{font:500 .68rem var(--f-mono);color:var(--muted);background:none;border:0;padding:0;cursor:pointer;display:block;margin-bottom:1px}
+.pblk .pid:hover{color:var(--accent);text-decoration:underline}
+.pblk.hd{border-left-style:dotted;color:var(--muted);font-size:.9rem}
+.pblk.hd .pid{cursor:default;text-decoration:none}
+.pblk.focusp{background:color-mix(in srgb,var(--accent) 10%, transparent);border-left-color:var(--accent)}
+.pblk .ppv{margin:4px 0 6px;padding:6px 9px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font-size:.86rem}
+.pblk .ppv .s{padding:2px 6px 2px 8px;border-left:3px solid var(--line);margin-bottom:3px}
+.pblk .ppv .s.B{border-left-color:var(--buddha)} .pblk .ppv .s.O{border-left-color:var(--other)}
+.pblk .ppv .w{font:500 .66rem var(--f-mono);color:var(--muted)} .pblk .ppv .p{font-family:var(--f-pali)} .pblk .ppv .e{display:block;font-size:.78rem;color:var(--muted)}
+.pblk .ppv .go{font-size:.78rem;color:var(--accent)}
+/* ===== Short note พุทธพจน์ ===== */
+#noteview{padding-top:14px}
+.nhead{display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.nhead h2{margin:0;font-size:1.65rem;line-height:1.25}
+.nhead h2 small{font-family:var(--f-pali);font-style:italic;font-weight:400;color:var(--muted);font-size:1rem;margin-left:8px}
+.nhead .intro{max-width:72ch;color:var(--muted);font-size:.93rem;margin-top:4px}
+.ntools{display:flex;gap:6px;flex-wrap:wrap}
+.ntools button,.ntools a{font-size:.85rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit}
+.nkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:12px;align-items:center}
+.nkey span{display:inline-flex;gap:5px;align-items:center}
+.nkey .sw{width:22px;border-top:2px solid var(--ink)} .nkey .sw.room{border-top:2px dashed var(--muted)}
+.ntoc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ntoc a{font-size:.82rem;text-decoration:none;color:var(--ink);border-left:4px solid var(--c);background:var(--panel);border-radius:6px;padding:3px 9px 3px 7px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.npaper{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:860px){.npaper{grid-template-columns:minmax(0,1fr)}}
+.nbox{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px 20px;overflow:hidden;scroll-margin-top:12px}
+.nbox::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c)}
+.nbox.L{grid-column:1/-1}
+.nbox.S{background:repeating-linear-gradient(135deg,var(--panel) 0 10px,var(--bg) 10px 20px);border-style:dashed}
+.nbox.flash{animation:nflash 1.4s ease}
+@keyframes nflash{0%,40%{box-shadow:0 0 0 4px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+.nbox .zn{font-size:.74rem;font-weight:700;color:var(--c);letter-spacing:.02em}
+.nbox h3{margin:2px 0 6px;font-size:1.22rem;line-height:1.35;text-wrap:balance}
+.nbox .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--c);color:var(--panel);font-size:.85rem;margin-right:8px;vertical-align:2px}
+.nlead{font-size:.95rem;margin:0 0 10px;display:inline;background:linear-gradient(transparent 58%, color-mix(in srgb,var(--c) 26%, transparent) 58%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.nlead-w{margin-bottom:10px}
+.nlead-w .by{font-size:.7rem;color:var(--muted);display:block}
+.nbody{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.nbox.L .nbody{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+@media (max-width:860px){.nbox.L .nbody{grid-template-columns:minmax(0,1fr)}}
+.nbox.L.wide .nbody{grid-template-columns:minmax(0,1fr)}
+.nlines{list-style:none;margin:0;padding:0}
+.nlines li{position:relative;padding:4px 0 4px 22px;font-size:.93rem;line-height:1.5;border-bottom:1px dotted var(--line)}
+.nlines li:last-child{border-bottom:0}
+.nlines li::before{content:"•";position:absolute;left:6px;top:4px;color:var(--c);font-weight:700}
+.nlines li.mk-key::before{content:"★";left:2px;color:var(--buddha)}
+.nlines li.mk-warn::before{content:"⚠";left:1px;color:var(--warn)}
+.nlines li.mk-gap::before{content:"?";left:5px;color:var(--muted);font-weight:800}
+.nlines li.mk-contrast::before{content:"⇄";left:1px;color:var(--other);font-weight:800}
+.nlines li.R{font-style:italic;color:var(--muted)}
+.nlines .nt{display:block;font-size:.78rem;color:var(--muted);font-style:normal}
+.rc{display:inline-flex;align-items:center;gap:3px;font:500 .72rem var(--f-mono);border:1px solid var(--line);border-radius:5px;padding:0 5px;margin-left:4px;background:var(--bg);color:var(--accent);cursor:pointer;vertical-align:1px;white-space:nowrap}
+.rc:hover,.rc:focus-visible{border-color:var(--accent);outline:none}
+.lv.R{color:var(--muted);background:transparent;border-color:var(--muted);border-style:dotted}
+.nlines .lv,.nfig .lv{margin-left:4px;vertical-align:1px;height:16px;font-size:.64rem;min-width:16px}
+.nquote{margin:0;border-left:4px solid var(--buddha);background:var(--buddha-soft);border-radius:0 8px 8px 0;padding:9px 12px;font-size:.92rem}
+.nquote .qt::before{content:"“";font-size:1.6rem;line-height:0;vertical-align:-.4em;color:var(--buddha);margin-right:2px}
+.nquote .qp{display:block;font-family:var(--f-pali);font-style:italic;color:var(--muted);font-size:.86rem;margin-top:5px}
+.nquote .qw{display:block;margin-top:6px;font-size:.8rem;color:var(--warn)}
+.nquote .qh{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted);margin-bottom:3px}
+.naside{background:color-mix(in srgb,var(--endorse-soft) 85%, var(--panel));border:1px solid color-mix(in srgb,var(--endorse) 30%, transparent);border-radius:4px 10px 10px 10px;padding:7px 10px;font-size:.86rem;transform:rotate(-.4deg);box-shadow:2px 3px 0 color-mix(in srgb,var(--endorse) 18%, transparent)}
+.naside .t::before{content:"✎ ";color:var(--endorse)}
+.nlinks{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:.8rem;align-items:center}
+.nlinks .lb{color:var(--muted)}
+.nlinks a{display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--bg);cursor:pointer}
+.nlinks a i{width:18px;border-top:2px solid var(--ink)} .nlinks a.room i{border-top:2px dashed var(--muted)}
+.nlinks a small{color:var(--muted)}
+/* ภาพประกอบ */
+.nfig{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:.86rem;position:relative}
+.nfig .fcap{font-size:.74rem;color:var(--muted);margin-top:8px;line-height:1.45}
+.nfig .fcap::before{content:"ⓘ "}
+.ld-rows{display:grid;gap:4px}
+.ld-rows .hd{font-size:.76rem;font-weight:700;color:var(--muted);text-align:center;align-self:end}
+.ld-rows .rl{font-size:.76rem;font-weight:600;align-self:center;text-align:right;padding-right:6px;border-right:2px solid var(--line)}
+.ld-rows .rl.top{color:var(--buddha)}
+@media (max-width:560px){.ld-rows{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ld-rows>span:first-child{display:none}.ld-rows .rl{grid-column:1/-1;text-align:left;border-right:0;border-bottom:2px solid var(--line);padding:6px 0 1px;margin-top:4px}}
+.rc{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.stp{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:6px;padding:4px 7px;line-height:1.4;font-size:.82rem;position:relative}
+.stp.el{border-style:dashed;border-left-style:dashed}
+.stp.key{box-shadow:0 0 0 2px color-mix(in srgb,var(--buddha) 55%, transparent)}
+.stp .tg{display:inline-block;font:600 .64rem var(--f-mono);color:var(--warn);border:1px dashed var(--warn);border-radius:4px;padding:0 4px;margin-left:4px;cursor:help}
+.stp .vl{display:inline-block;font:700 .72rem var(--f-mono);background:var(--buddha);color:var(--panel);border-radius:4px;padding:0 5px;margin-right:4px}
+.stp .nn{display:block;font-size:.72rem;color:var(--muted)}
+.stp .eq{display:block;font-size:.7rem;color:var(--other)}
+.stp.empty{background:transparent;border:0}
+.ld-arrow{position:absolute;left:4px;top:10px;bottom:10px;width:0;border-left:2px solid var(--line)}
+.ld-cols{display:grid;gap:14px;position:relative}
+.ld-col{display:flex;flex-direction:column}
+.ld-col .stk{flex:1}
+.ld-col h5{margin:0 0 6px;font-size:.8rem;text-align:center;color:var(--ink)}
+.ld-col .stk{display:flex;flex-direction:column-reverse;gap:6px;position:relative}
+.ld-col .stk::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid var(--line);z-index:0}
+.ld-col .stp{z-index:1}
+.ld-col .up{text-align:center;font-size:.7rem;color:var(--muted)}
+.ld-svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.ld-svg path{fill:none;stroke:var(--other);stroke-width:1.6;stroke-dasharray:5 4;opacity:.75}
+.pr{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center}
+.pr .sd{display:flex;flex-direction:column;gap:5px}
+.pr .sd h5{margin:0 0 2px;font-size:.84rem;text-align:center}
+.pr .ct{max-width:9.5em;text-align:center;font-size:.76rem;font-weight:700;color:var(--buddha);border:2px solid var(--buddha);border-radius:999px;padding:6px 8px;background:var(--buddha-soft)}
+@media (max-width:520px){.pr{grid-template-columns:minmax(0,1fr)}.pr .ct{max-width:none}}
+.fd .plot{border-radius:8px;padding:8px 10px 10px;position:relative;color:var(--ink)}
+.fd .plot h5{margin:0 0 4px;font-size:.86rem}
+.fd .good{background:repeating-linear-gradient(0deg,color-mix(in srgb,#5b8a3a 22%, var(--panel)) 0 8px,color-mix(in srgb,#5b8a3a 10%, var(--panel)) 8px 16px)}
+.fd .bad{background:repeating-linear-gradient(0deg,color-mix(in srgb,#8a6a3a 22%, var(--panel)) 0 8px,color-mix(in srgb,#8a6a3a 8%, var(--panel)) 8px 16px)}
+.fd .plot .ic{font-size:1rem;margin-right:4px}
+.fd .seed{text-align:center;font-size:.76rem;color:var(--muted);margin:4px 0}
+.ls{list-style:none;margin:0;padding:0;counter-reset:n;display:flex;flex-direction:column;gap:5px}
+.ls li{counter-increment:n;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start}
+.ls li::before{content:counter(n, thai);display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--c);color:var(--panel);font-size:.76rem}
+.ls.fr li{grid-template-columns:24px minmax(0,1fr) 18px minmax(0,1.3fr)}
+.ls .ar{color:var(--muted);text-align:center}
+.ls .fruit{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:.8rem}
+@media (max-width:520px){.ls.fr li{grid-template-columns:24px minmax(0,1fr)}.ls .ar{display:none}.ls .fruit{grid-column:2}}
+.fl{display:flex;gap:6px;align-items:stretch}
+.fl .stp{flex:1}
+.fl .ar{align-self:center;color:var(--muted);font-size:1.1rem}
+.fl.v{flex-direction:column}
+.fl.v .ar{transform:rotate(90deg);align-self:center;line-height:1}
+@media (max-width:520px){.fl{flex-direction:column}.fl .ar{transform:rotate(90deg);align-self:center}}
+.qa{display:flex;flex-direction:column;gap:8px}
+.qa .q{font-weight:600;font-size:.86rem}
+.qa .q small{font-weight:400;color:var(--muted)}
+.qa .q::before{content:"ถาม ";color:var(--other);font-weight:800}
+.qa .a{margin-left:14px;font-size:.86rem;border-left:3px solid var(--buddha);padding-left:8px}
+.qa .a::before{content:"ตรัส ";color:var(--buddha);font-weight:800}
+/* แผงสรุปพระสูตร */
+.ndrawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--panel);border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.14);transform:translateX(105%);transition:transform .22s ease;z-index:50;overflow:auto;padding:16px 18px 30px}
+.ndrawer.open{transform:none}
+@media (max-width:640px){.ndrawer{top:auto;width:100vw;max-height:80vh;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;transform:translateY(105%)}}
+.ndrawer .x{position:sticky;top:0;float:right;font-size:1.2rem;border:1px solid var(--line);background:var(--panel);border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--ink)}
+.ndrawer h3{margin:0 0 2px;font-size:1.2rem}
+.ndrawer .sid{font:500 .8rem var(--f-mono);color:var(--muted)}
+.ndrawer dl{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:4px 10px;font-size:.88rem;margin:10px 0}
+.ndrawer dt{color:var(--muted);font-size:.8rem}
+.ndrawer dd{margin:0}
+.ndrawer .pt{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:.92rem}
+.ndrawer .pt .by{display:block;font-size:.72rem;color:var(--muted)}
+.ndrawer h4{font-size:.78rem;color:var(--muted);margin:14px 0 6px}
+.ndrawer .part{border:1px solid var(--line);border-left:4px solid var(--buddha);border-radius:8px;padding:7px 10px;margin-bottom:7px;font-size:.88rem}
+.ndrawer .part.B,.ndrawer .part.BP{border-left-color:var(--endorse)} .ndrawer .part.U{border-left-color:var(--muted)} .ndrawer .part.none{border-left-color:var(--other)}
+.ndrawer .part.hit{box-shadow:0 0 0 2px var(--accent)}
+.ndrawer .part .rid{font:500 .74rem var(--f-mono);color:var(--muted)}
+.ndrawer .acts{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.ndrawer .acts a{font-size:.78rem;padding:2px 9px;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--accent);background:var(--bg)}
+.ndrawer .wb{background:var(--warn-soft);border-left:3px solid var(--warn);padding:6px 9px;border-radius:4px;font-size:.84rem}
+.ndrawer details summary{cursor:pointer;font-size:.78rem;color:var(--accent);margin-top:5px}
+.ndrawer .pv{margin-top:5px;font-size:.86rem;max-height:240px;overflow:auto}
+.ndrawer .pv .s{padding:2px 6px 2px 8px;border-left:3px solid var(--line);margin-bottom:3px}
+.ndrawer .pv .s.B{border-left-color:var(--buddha);background:var(--buddha-soft)}
+.ndrawer .pv .s.O{border-left-color:var(--other);background:var(--other-soft)}
+.ndrawer .pv .w{font:500 .66rem var(--f-mono);color:var(--muted)}
+.ndrawer .pv .e{font-size:.78rem;color:var(--muted)}
+.ndrawer .pv .p{font-family:var(--f-pali)}
+.ndrawer .hitref{font-size:.8rem;color:var(--muted);margin-top:4px}
+.nscrim{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:49;display:none}
+.nscrim.open{display:block}
+.nfoot{font-size:.8rem;color:var(--muted);margin-top:18px;border-top:1px solid var(--line);padding-top:10px}
+@media print{
+  header .topnav,.ntools,.ndrawer,.nscrim,#sf,#status,.legend,.ntoc{display:none!important}
+  body{background:#fff}
+  .npaper{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .nbox{break-inside:avoid;box-shadow:none}
+  .rc{color:#555}
+}
+
+/* ===== แผนผังธรรม ===== */
+[hidden]{display:none!important}
+:root{--g1:#b5651d;--g2:#2e7d6b;--g3:#6a5acd;--g4:#3b7fb6;--g5:#a8892a;--g6:#b0466b;--g7:#5f7d2f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--g1:#e39a5a;--g2:#62c2aa;--g3:#a99bf0;--g4:#79b4e6;--g5:#dcc062;--g6:#e98aab;--g7:#a5c86c}}
+:root[data-theme="dark"]{--g1:#e39a5a;--g2:#62c2aa;--g3:#a99bf0;--g4:#79b4e6;--g5:#dcc062;--g6:#e98aab;--g7:#a5c86c}
+.topnav{display:flex;gap:6px;align-items:center}
+.topnav a{font-size:.9rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);background:var(--panel)}
+.topnav a.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+#mapview{padding-top:14px}
+.mhead{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+.mhead h2{margin:0;font-size:1.5rem}
+.mhead h2 small{font-family:var(--f-pali);font-style:italic;font-weight:400;color:var(--muted);font-size:1rem;margin-left:8px}
+.mhead .sub{font-size:.88rem;color:var(--muted);max-width:70ch;margin-top:2px}
+.mtools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mtools button{font-size:.85rem;padding:5px 10px}
+.mtools button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.mtools .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.mgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:16px;align-items:start}
+@media (max-width:1020px){.mgrid{grid-template-columns:minmax(0,1fr)}}
+.mcanvas{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto;position:relative;
+  background-image:radial-gradient(circle at center, color-mix(in srgb, var(--accent) 7%, transparent) 0, transparent 60%),radial-gradient(var(--line) 1px, transparent 1px);
+  background-size:100% 100%,22px 22px}
+.mfit{position:relative;transform-origin:0 0}
+.mstage{position:absolute;left:0;top:0;width:1240px;height:1040px}
+.mstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ring{fill:none;stroke:var(--line);stroke-dasharray:2 6}
+.e-tree{fill:none;stroke-width:2;opacity:.45}
+.e-hub{fill:none;stroke-width:5;opacity:.35;stroke-linecap:round}
+.e-x{fill:none;stroke:var(--ink);stroke-width:1.6;opacity:.38;transition:opacity .2s}
+.e-x.room{stroke:var(--muted);stroke-dasharray:6 5}
+.e-x.on{opacity:.95;stroke-width:2.6}
+.e-x.off,.e-tree.off{opacity:.07}
+.e-x.hid{display:none}
+.e-lab{font:600 12px var(--f-mono);fill:var(--ink)}
+.e-labbg{fill:var(--panel);stroke:var(--ink);stroke-width:1}
+.mroot{position:absolute;width:150px;height:150px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%, color-mix(in srgb,var(--buddha) 30%, var(--panel)), var(--buddha-soft));border:3px solid var(--buddha);cursor:pointer;
+  box-shadow:0 0 0 10px color-mix(in srgb,var(--buddha) 10%, transparent),0 0 0 22px color-mix(in srgb,var(--buddha) 5%, transparent)}
+.mroot b{font-size:2.3rem;line-height:1;color:var(--ink)}
+.mroot i{font-family:var(--f-pali);color:var(--muted);margin-top:4px}
+.mhub{position:absolute;display:flex;gap:8px;align-items:center;padding:7px 14px 7px 7px;border-radius:999px;border:2px solid var(--c);
+  background:color-mix(in srgb,var(--c) 14%, var(--panel));font-weight:700;cursor:pointer;white-space:nowrap;font-size:1rem;color:var(--ink)}
+.mhub .n{width:30px;height:30px;border-radius:50%;background:var(--c);color:var(--panel);display:grid;place-items:center;font-size:.95rem}
+.mhub .ct{font:500 .75rem var(--f-mono);color:var(--muted);font-weight:500}
+.mhub.col{border-style:dashed;opacity:.8}
+.mhub.col .ct::after{content:" ซ่อน"}
+.mnode{position:absolute;width:164px;padding:7px 10px 7px 12px;border-radius:9px;background:var(--panel);border:1px solid color-mix(in srgb,var(--c) 45%, var(--line));
+  border-left:5px solid var(--c);font-size:.86rem;line-height:1.38;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:opacity .2s, box-shadow .2s, transform .15s;text-align:left;font-family:var(--f-thai);color:var(--ink)}
+.mnode:hover{box-shadow:0 3px 10px rgba(0,0,0,.14);transform:translateY(-1px)}
+.mnode.gap{border:1.5px dashed var(--muted);border-left:5px dashed var(--muted);background:repeating-linear-gradient(135deg,var(--panel) 0 8px,var(--bg) 8px 16px)}
+.mnode.sel{box-shadow:0 0 0 3px var(--accent)}
+.mnode.nb{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 55%, transparent)}
+.mnode.dim,.mhub.dim{opacity:.22}
+.mnode.hid,.mhub.hid{display:none}
+.mnode .t{font-weight:600;display:block}
+.mnode .f{display:flex;gap:6px;align-items:center;margin-top:4px;font-size:.72rem;color:var(--muted);font-family:var(--f-mono)}
+.lv{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:4px;font:700 .7rem var(--f-mono);border:1px solid}
+.lv.A{color:var(--buddha);background:var(--buddha-soft);border-color:var(--buddha)}
+.lv.B,.lv.BP{color:var(--endorse);background:var(--endorse-soft);border-color:var(--endorse)}
+.lv.C{color:var(--warn);background:var(--warn-soft);border-color:var(--warn)}
+.lv.U{color:var(--muted);background:var(--bg);border-color:var(--muted)}
+.lv.G{color:var(--muted);background:transparent;border-style:dashed;border-color:var(--muted)}
+.wm{color:var(--warn);font-weight:700}
+.mside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto}
+@media (max-width:1020px){.mside{position:static;max-height:none}}
+.mside h3{margin:0 0 4px;font-size:1.15rem;text-wrap:balance}
+.mside .bchip{display:inline-flex;gap:6px;align-items:center;font-size:.8rem;font-weight:600;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:1px 9px;margin-bottom:8px}
+.mside .bchip i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.mside h4{font-size:.78rem;letter-spacing:.05em;color:var(--muted);margin:16px 0 6px;text-transform:none}
+.sumbox{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.95rem}
+.sumbox .by{display:block;font-size:.74rem;color:var(--muted);margin-bottom:4px}
+.gapbox{border:1.5px dashed var(--muted)}
+.ref{border:1px solid var(--line);border-left:4px solid var(--buddha);border-radius:8px;padding:8px 10px;margin:0 0 8px}
+.ref.BP,.ref.B{border-left-color:var(--endorse)} .ref.U{border-left-color:var(--muted)} .ref.C{border-left-color:var(--warn)}
+.ref .rh{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.84rem}
+.ref .rid{font-family:var(--f-mono);font-size:.78rem}
+.ref .rn{font-size:.9rem;margin:4px 0}
+.ref .lvt{font-size:.75rem;color:var(--muted)}
+.ref .wbox{background:var(--warn-soft);border-left:3px solid var(--warn);font-size:.83rem;padding:5px 8px;border-radius:4px;margin:6px 0}
+.ref .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ref .acts a{font-size:.8rem;padding:3px 9px;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--accent);background:var(--bg)}
+.ref details summary{cursor:pointer;font-size:.8rem;color:var(--accent);margin-top:6px}
+.ref .pv{margin-top:6px;font-size:.88rem;max-height:260px;overflow:auto}
+.ref .pv .s{padding:3px 6px 3px 8px;border-left:3px solid var(--line);margin-bottom:3px}
+.ref .pv .s.B{border-left-color:var(--buddha);background:var(--buddha-soft)}
+.ref .pv .s.O{border-left-color:var(--other);background:var(--other-soft)}
+.ref .pv .p{font-size:.9rem}
+.ref .pv .e{font-size:.8rem;color:var(--muted)}
+.ref .pv .w{font:500 .68rem var(--f-mono);color:var(--muted)}
+.cx{font-size:.88rem;border-top:1px solid var(--line);padding:7px 0;display:grid;grid-template-columns:auto 1fr;gap:2px 8px}
+.cx .ln{width:28px;height:0;border-top:2.5px solid var(--ink);margin-top:.7em}
+.cx .ln.room{border-top:2.5px dashed var(--muted)}
+.cx a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none}
+.cx .w{grid-column:2;color:var(--muted);font-size:.84rem}
+.mlegend{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:.84rem;align-items:center}
+.mlegend .ln{width:34px;border-top:2.5px solid var(--ink)} .mlegend .ln.room{border-top:2.5px dashed var(--muted)}
+.mlegend .gp{width:34px;height:18px;border:1.5px dashed var(--muted);border-radius:4px;background:repeating-linear-gradient(135deg,var(--panel) 0 5px,var(--bg) 5px 10px)}
+.stat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font-size:1.35rem;line-height:1.1}
+.stat span{font-size:.75rem;color:var(--muted)}
+.nkbar{display:grid;grid-template-columns:7.5em 1fr 2em;gap:4px 8px;align-items:center;font-size:.82rem}
+.nkbar .tr{height:10px;background:var(--bg);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.nkbar .tr i{display:block;height:100%;background:var(--buddha)}
+.nkbar .v{font-family:var(--f-mono);color:var(--muted);text-align:right}
+.mnote{font-size:.8rem;color:var(--muted);margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+/* มุมมองรายการ (มือถือ) */
+.mlist{display:flex;flex-direction:column;gap:10px}
+.mlist details{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px}
+.mlist summary{cursor:pointer;padding:10px 12px;font-weight:700;display:flex;gap:8px;align-items:center}
+.mlist summary .n{width:24px;height:24px;border-radius:50%;background:var(--c);color:var(--panel);display:grid;place-items:center;font-size:.8rem}
+.mlist summary .ct{font:500 .75rem var(--f-mono);color:var(--muted);margin-left:auto}
+.mlist ul{list-style:none;margin:0;padding:0 10px 10px}
+.mlist li button{all:unset;box-sizing:border-box;display:flex;gap:8px;align-items:flex-start;width:100%;padding:8px 6px;border-top:1px solid var(--line);cursor:pointer;font-size:.93rem}
+.mlist li button:focus-visible{outline:2px solid var(--accent)}
+.mlist li button.gap{color:var(--muted);font-style:italic}
+
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+/* ===== short note ฉบับ ๓ (ต้นแบบ) ===== */
+.n3{max-width:1120px;margin:0 auto}
+.n3top{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem;margin-bottom:10px}
+.n3top .proto{background:var(--endorse-soft);color:var(--endorse);border-radius:999px;padding:2px 10px;font-weight:600}
+.n3top a{color:var(--accent)}
+.n3top button{margin-left:auto;font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer}
+.n3hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:12px 28px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 22px}
+@media (max-width:860px){.n3hero{grid-template-columns:minmax(0,1fr)}.n3cycw{max-width:400px;margin:0 auto;width:100%}}
+.n3hero h2{margin:0;font-size:1.9rem;line-height:1.25}.n3hero h2 small{font:italic 400 1rem var(--f-pali);color:var(--muted);margin-left:10px}
+.n3intro{margin:6px 0 10px;color:var(--muted)}
+.n3key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted);margin-bottom:12px}
+.n3hubtxt{border-left:4px solid var(--accent);padding:6px 12px;background:var(--bg);border-radius:0 8px 8px 0}
+.n3cyc{width:100%;height:auto;display:block;color:var(--muted)}
+.n3cyc .arcs path{fill:none;stroke:currentColor;stroke-width:2}
+.n3cyc .arcs path.loop{stroke:var(--accent);stroke-width:2.6;stroke-dasharray:6 5;color:var(--accent)}
+.n3cyc .lp{fill:var(--accent);font:600 13px var(--f-thai)}
+.n3node{cursor:pointer;color:var(--c)}
+.n3node circle{fill:var(--panel);stroke:var(--c);stroke-width:3}
+.n3node:hover circle,.n3node:focus circle{fill:var(--bg)}
+.n3node text{fill:var(--ink);font:700 15px var(--f-thai);text-anchor:middle}
+.n3hub{cursor:pointer}.n3hub circle{fill:var(--bg);stroke:var(--line);stroke-width:1.5}
+.n3hub text{fill:var(--ink);font:700 14px var(--f-thai)}.n3hub text.s{font:400 12px var(--f-thai);fill:var(--muted)}
+.n3hubfig{margin:10px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.n3hubfig summary{cursor:pointer;color:var(--accent);font-size:.88rem}
+.n3sec{display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 14px;margin-top:18px;scroll-margin-top:12px;border-radius:14px}
+.n3sec.flash,.n3loop.flash{animation:nflash 1.4s ease}
+.n3rail{display:flex;flex-direction:column;align-items:center}
+.n3rail .dot,.n3loop .dot{width:44px;height:44px;border-radius:50%;background:var(--c,var(--accent));color:var(--panel);display:grid;place-items:center;flex:none}
+.n3rail .ln{flex:1;width:4px;background:var(--c);opacity:.35;border-radius:2px;margin-top:6px}
+.n3body{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px 16px;border-top:5px solid var(--c);min-width:0}
+.n3k{font-size:.76rem;font-weight:700;color:var(--c)}
+.n3body h3{margin:2px 0 6px;font-size:1.35rem;line-height:1.3}
+.n3lead{margin:0 0 10px;font-size:1.02rem;font-weight:600}
+.n3lead .by,.n3loop .by2{display:block;font-size:.7rem;font-weight:400;color:var(--muted)}
+.n3cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:14px 22px;align-items:start}
+.n3cols.wide{grid-template-columns:minmax(0,1fr)}.n3cols.wide .n3story{columns:2 340px;column-gap:28px}.n3cols.wide .n3story p{break-inside:avoid}
+@media (max-width:920px){.n3cols{grid-template-columns:minmax(0,1fr)}}
+.n3story p{margin:0 0 .8em;line-height:1.85}
+.n3s.R{font-style:italic;color:var(--muted)}
+.n3s.mk-key{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--c,var(--accent)) 22%,transparent) 62%)}
+.n3s.mk-gap{color:var(--muted)}
+.n3s .lv{margin-left:3px;vertical-align:1px;height:16px;font-size:.64rem;min-width:16px}
+.n3q{display:inline-block;font-size:.64rem;border:1px dotted var(--muted);color:var(--muted);border-radius:4px;padding:0 4px;margin-left:3px;vertical-align:1px}
+.n3warn{font-size:.84rem;background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin-top:4px}
+.n3warn b{display:block;color:var(--warn);font-size:.78rem}
+.n3warn div{margin:3px 0}
+.n3figs{display:flex;flex-direction:column;gap:12px;min-width:0}
+.n3figs .nfig{margin:0}
+.n3next{text-align:center;font-size:1.6rem;color:var(--muted);line-height:1;margin:6px 0 -8px 0;padding-right:calc(100% - 44px);width:44px}
+.n3loop{display:flex;gap:14px;align-items:flex-start;margin-top:18px;background:var(--panel);border:2px dashed var(--accent);border-radius:14px;padding:14px 18px;scroll-margin-top:12px}
+.n3loop h3{margin:2px 0 6px}.n3loop p{margin:0 0 6px}
+.n3up{font:inherit;font-size:.85rem;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:8px;padding:3px 10px;cursor:pointer}
+.n3gaps{margin-top:14px;font-size:.85rem;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:8px 14px}
+.n3gaps ul{margin:4px 0 0;padding-left:20px}
+.n3pv{margin:10px 0}
+.n3ph{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;font-size:.76rem;color:var(--muted);margin-bottom:4px}
+.n3th{font-size:1rem;line-height:1.85;background:var(--bg);border-radius:10px;padding:10px 12px}
+.n3th p{margin:0 0 .5em}
+.thu.focusp{outline:2px solid var(--hl);border-radius:8px;padding:2px 6px}
+.thai .sp.cite,.n3ph .cite{background:var(--hl);border-radius:3px;font-style:normal}
+.n3note{font-size:.74rem;color:var(--muted);margin-top:6px}
+.n3pali{margin-top:10px}.n3pali summary{cursor:pointer;color:var(--accent);font-size:.85rem}
+.ndrawer .acts button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--panel);color:var(--accent);border-radius:8px;padding:3px 10px;cursor:pointer}
+@media print{.n3top,.ndrawer,.nscrim,.n3up{display:none!important}.n3sec{break-inside:avoid}.n3hero{border:0}}
+.themebtn{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer;margin-left:4px}
+/* ===== short note ฉบับ ๓ ===== */
+.s3,.s3menu{max-width:1100px;margin:0 auto}
+.s3menu h2{margin:4px 0 4px;font-size:1.7rem}
+.s3sub{color:var(--muted);margin:4px 0 12px;max-width:75ch}
+.s3cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.s3card{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 12px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--g1);border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.s3card:hover{border-color:var(--accent)}
+.s3card .ic{grid-row:1/5;color:var(--g1)}
+.s3card .t{font-size:1.25rem;font-weight:700}.s3card .t small{font-family:var(--f-pali);font-style:italic;font-weight:400;color:var(--muted);margin-left:8px;font-size:.9rem}
+.s3card .q{font-size:.92rem}.s3card .m{font-size:.78rem;color:var(--muted)}.s3card .go{color:var(--accent);font-weight:600;font-size:.9rem}
+.s3card.soon{border-style:dashed;border-left-color:var(--line);background:transparent;color:var(--muted)}.s3card.soon .ic{color:var(--muted)}
+/* Gemini v3: Import / External Gist Short Note UI */
+.s3bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 16px}
+.s3bar button{font:inherit;font-size:.86rem;padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.s3bar button:hover{border-color:var(--accent);color:var(--accent)}
+.s3bar button.prim{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.s3bar button.prim:hover{opacity:.92;color:var(--bg)}
+.s3card-wrap{display:flex;flex-direction:column;gap:0}
+.s3card-wrap .s3card{flex:1}
+.s3cacts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 12px;margin:-4px 6px 0;background:var(--bg);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;font-size:.78rem;color:var(--muted)}
+.s3cacts .src-tag{margin-right:auto;font-weight:600;color:var(--accent)}
+.s3cacts button{font:inherit;font-size:.76rem;padding:2px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);cursor:pointer}
+.s3cacts button:hover{border-color:var(--accent);color:var(--accent)}
+.s3cacts button.del:hover{border-color:var(--warn);color:var(--warn)}
+.gmodal-bg{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:900;display:flex;align-items:center;justify-content:center;padding:16px}
+.gmodal{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px;max-width:680px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.35)}
+.gmodal-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.gmodal-hd h3{margin:0;font-size:1.15rem}
+.gmodal-hd .x{border:0;background:transparent;font-size:1.4rem;line-height:1;color:var(--muted);cursor:pointer;padding:2px 6px}
+.gmodal-bd{padding:16px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;font-size:.9rem}
+.gmodal-bd textarea{width:100%;min-height:220px;font:13px/1.5 var(--f-mono);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+.gmodal-bd input[type=url],.gmodal-bd input[type=text]{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.gmodal-ft{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--line)}
+.gmodal-ft button{font:inherit;font-size:.88rem;padding:6px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}
+.gmodal-ft button.prim{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.gerr{color:var(--warn);background:var(--warn-soft);padding:8px 10px;border-radius:8px;font-size:.84rem}
+.gok{color:var(--accent);background:var(--bg);border:1px solid var(--accent);padding:8px 10px;border-radius:8px;font-size:.84rem}
+.gurl-row{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.gurl-row .u{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--f-mono);font-size:.78rem}
+.s3top{display:flex;gap:10px;align-items:center;font-size:.88rem;margin-bottom:10px}
+.s3top .sp{flex:1}
+.s3top a,.s3top button{font:inherit;font-size:.85rem;padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);text-decoration:none;cursor:pointer}
+.s3hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:16px 26px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;scroll-margin-top:10px}
+@media (max-width:900px){.s3hero{grid-template-columns:minmax(0,1fr);padding:14px}}
+.s3k{font-size:.76rem;font-weight:700;color:var(--c,var(--accent));letter-spacing:.01em}.s3k span{font-weight:400;color:var(--muted)}
+.s3hero h2{margin:2px 0 8px;font-size:1.8rem;line-height:1.2}.s3hero h2 small{font-family:var(--f-pali);font-style:italic;font-weight:400;color:var(--muted);font-size:1rem;margin-left:8px}
+.s3qq{margin:0 0 8px;font-size:1.06rem;font-weight:600;border-left:4px solid var(--accent);padding:4px 0 4px 12px}
+.s3qq span{display:block;font-size:.72rem;font-weight:400;color:var(--muted)}
+.s3key{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.s3key>span{display:inline-flex;gap:5px;align-items:center}
+.s3dia{min-width:0}
+.s3dh{font-size:.8rem;color:var(--muted);margin-bottom:2px}.s3dh b{color:var(--ink);font-size:.9rem}
+.s3cyc{width:100%;height:auto;display:block}
+.s3cyc .eg path{fill:none;stroke-width:2.2}
+.s3cyc .eg path.sut{stroke:var(--ink);opacity:.7}.s3cyc .eg path.room{stroke:var(--muted);stroke-dasharray:6 5}
+.s3cyc .ah{fill:var(--ink);opacity:.8}.s3cyc .ahr{fill:var(--muted)}
+.s3node{cursor:pointer;color:var(--c)}
+.s3node circle{fill:color-mix(in srgb,var(--c) 14%, var(--panel));stroke:var(--c);stroke-width:2.4}
+.s3node.br circle{stroke-width:1.8}
+.s3node:hover circle,.s3node:focus-visible circle{fill:color-mix(in srgb,var(--c) 28%, var(--panel))}
+.s3node .lb{fill:var(--ink);font:700 14px var(--f-thai)}.s3node.br .lb{font-size:12.5px}
+.s3node .sb{fill:var(--muted);font:11px var(--f-thai);paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.s3hub circle{fill:var(--bg);stroke:var(--accent);stroke-width:1.6;stroke-dasharray:3 3}
+.s3hub text{fill:var(--ink);font:700 14px var(--f-thai)}.s3hub text.s{font-weight:400;font-size:12.5px;fill:var(--muted)}.s3hub text.r{font:600 11px var(--f-mono);fill:var(--accent)}
+.s3hub[data-s]{cursor:pointer}.s3hub[data-s]:hover circle{stroke-dasharray:none}
+.s3lb{cursor:pointer}.s3lb circle{fill:var(--panel);stroke:var(--ink);stroke-width:1.4}.s3lb.room circle{stroke:var(--muted);stroke-dasharray:2 2}
+.s3lb text{font:700 11px var(--f-mono);fill:var(--ink)}.s3lb.room text{fill:var(--muted)}
+.s3lkey{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--muted);justify-content:center}
+.s3lkey span{display:inline-flex;gap:5px;align-items:center}.s3lkey i{width:24px;border-top:2.2px solid var(--ink)}.s3lkey i.room{border-top:2.2px dashed var(--muted)}
+.s3basis{font-size:.82rem;margin:8px 0 4px}
+.s3ld{font-size:.84rem;margin-top:6px}.s3ld summary{cursor:pointer;color:var(--accent)}
+.s3links{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.s3links li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:6px;align-items:start;border-radius:6px;padding:2px 4px}
+.s3links .nb{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.4px solid var(--ink);font:700 .68rem var(--f-mono)}
+.s3links li.room .nb{border-style:dashed;border-color:var(--muted);color:var(--muted)}
+.s3links li.room i{color:var(--muted)}
+.s3toc{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.s3toc a{font-size:.82rem;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--c);background:var(--panel);border-radius:6px;padding:3px 9px 3px 7px}
+.s3sec{display:grid;grid-template-columns:40px minmax(0,1fr);gap:0 12px;margin-top:18px;scroll-margin-top:10px;border-radius:14px}
+@media (max-width:600px){.s3sec{grid-template-columns:minmax(0,1fr)}.s3rail{display:none!important}}
+.s3rail{display:flex;flex-direction:column;align-items:center}
+.s3rail .dot{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:color-mix(in srgb,var(--c) 16%, var(--panel));border:2px solid var(--c);color:var(--c)}
+.s3rail .ln{flex:1;border-left:2px dotted var(--c);opacity:.5;margin-top:4px}
+.s3body{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:14px;padding:14px 18px 14px;min-width:0}
+@media (max-width:600px){.s3body{padding:12px 13px}}
+.s3body h3{margin:2px 0 8px;font-size:1.3rem;line-height:1.3}
+.s3lead{margin:0 0 12px;font-size:1rem;font-weight:600}
+.s3lead .by,.s3syn>b{display:block;font-size:.7rem;font-weight:400;color:var(--muted)}
+.s3story{max-width:none}
+.s3story>p,.s3close p{margin:0 0 12px;line-height:1.85;font-size:.98rem;max-width:78ch}
+.s3s{scroll-margin-top:90px;border-radius:4px;transition:background .3s}
+.s3s.R{font-style:italic;color:var(--muted)}
+.s3s.ot{color:var(--other)}
+.s3s.mk-key{background:linear-gradient(transparent 60%, color-mix(in srgb,var(--buddha) 28%, transparent) 60%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.s3s.mk-warn{color:var(--warn)}
+.s3s.told{animation:s3told 2.4s ease}
+@keyframes s3told{0%,50%{background:color-mix(in srgb,var(--c,var(--accent)) 30%, transparent)}100%{background:transparent}}
+.s3s .lv{margin-left:3px;vertical-align:1px;height:16px;font-size:.64rem;min-width:16px}
+.s3who{display:inline-block;font-size:.66rem;font-style:normal;border:1px dotted var(--other);color:var(--other);border-radius:4px;padding:0 4px;margin-left:3px;vertical-align:1px;line-height:1.5}
+.s3who.b{border-color:var(--endorse);color:var(--endorse)}
+.rc.el{border-style:dashed;border-color:var(--warn)}.rc i{font-style:normal;font-family:var(--f-thai);font-size:.62rem;color:var(--warn);margin-left:2px}
+.s3fl{display:inline-flex;align-items:center;gap:3px;font-size:.7rem;text-decoration:none;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:1px;white-space:nowrap}
+.s3fig{margin:4px 0 16px;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:10px 12px;font-size:.86rem;scroll-margin-top:60px}
+.s3fig.flash{animation:nflash 1.4s ease}
+.s3fig figcaption{display:flex;gap:8px;align-items:baseline;font-weight:600;margin-bottom:4px;line-height:1.45}
+.s3fig figcaption .no{flex:none;font-size:.72rem;font-weight:700;color:var(--panel);background:var(--c);border-radius:4px;padding:1px 6px}
+.s3how{display:flex;gap:6px;align-items:flex-start;font-size:.8rem;color:var(--muted);margin-bottom:8px}.s3how svg{flex:none;margin-top:2px;color:var(--c)}.s3how b{color:var(--ink)}
+.s3fb{position:relative}
+.s3emph{margin-top:8px;font-size:.8rem;background:color-mix(in srgb,var(--buddha) 12%, var(--panel));border-left:3px solid var(--buddha);border-radius:0 6px 6px 0;padding:5px 9px}
+.s3emph b{color:var(--buddha)}
+.s3cap{font-size:.76rem;color:var(--muted);margin:6px 0 4px}
+.s3told{font:inherit;font-size:.76rem;margin-top:8px;border:0;background:none;color:var(--accent);cursor:pointer;padding:0}
+.s3start{display:inline-block;margin-left:5px;font-size:.62rem;font-weight:700;color:var(--panel);background:var(--accent);border-radius:999px;padding:0 6px;vertical-align:1px}
+.s3axis{font-size:.72rem;color:var(--muted);font-weight:600}.s3ax{align-self:end}
+.s3bot{font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px}
+.s3lk{font-size:.72rem;color:var(--muted);margin-top:6px;display:flex;gap:6px;align-items:center}.s3lk i{width:22px;border-top:1.6px dashed var(--other)}
+.s3pair{display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr);gap:4px 6px;align-items:stretch}
+.s3pair .pc{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 7px;line-height:1.4}
+.s3pair .pc.hd{font-weight:700;text-align:center;background:transparent;border:0;border-bottom:2px solid var(--line);border-radius:0}
+.s3pair .pc.hd.win{border-bottom-color:var(--buddha);color:var(--buddha)}
+.s3pair .pc.win{border-color:color-mix(in srgb,var(--buddha) 55%, var(--line));box-shadow:inset 3px 0 0 var(--buddha)}
+.s3pair .pc.lose{opacity:.78}
+.s3pair .pc.empty{background:transparent;border:0}
+.s3pair .pv{display:grid;place-items:center;color:var(--buddha);font-weight:800}
+.s3win{display:block;font-size:.66rem;font-weight:600;color:var(--buddha)}
+.s3res{margin-top:8px;text-align:center;font-size:.84rem;border:2px solid var(--buddha);border-radius:8px;padding:5px 8px;color:var(--ink)}
+.s3res b{color:var(--buddha)}
+.s3tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.s3tb{border-collapse:collapse;width:100%;min-width:420px;font-size:.82rem}
+.s3tb th{text-align:left;font-size:.74rem;color:var(--muted);border-bottom:2px solid var(--line);padding:4px 6px}
+.s3tb td{border-bottom:1px solid var(--line);padding:5px 6px;vertical-align:top;background:var(--panel)}
+.s3tb td.rf{white-space:normal;min-width:7em}
+.s3fig .lv{margin-left:4px;vertical-align:1px;height:16px;font-size:.64rem;min-width:16px}
+.s3fig .ls li::before{background:var(--c);color:var(--panel)}
+.s3quote{margin:0 0 12px;border-left:4px solid var(--buddha);background:var(--buddha-soft);border-radius:0 8px 8px 0;padding:9px 12px;font-size:.95rem}
+.s3quote .qh{display:flex;flex-wrap:wrap;gap:4px;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted);margin-bottom:3px}
+.s3quote .qt::before{content:"“";font-size:1.6rem;line-height:0;vertical-align:-.4em;color:var(--buddha);margin-right:2px}
+.s3quote .qp{display:block;font-family:var(--f-pali);font-style:italic;color:var(--muted);font-size:.86rem;margin-top:5px}
+.s3quote .qw{display:block;margin-top:6px;font-size:.8rem;color:var(--warn)}
+.s3warn{font-size:.85rem;background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:4px 0 8px}.s3warn>b{color:var(--warn)}.s3warn .s3s.mk-warn,.s3warn .s3s{color:var(--ink)}
+.s3sus{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.s3sus button{font:500 .72rem var(--f-mono);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:5px;padding:1px 6px;cursor:pointer}
+.s3up{display:inline-block;font-size:.76rem;color:var(--accent);margin-top:8px;text-decoration:none}
+.s3close{display:flex;gap:14px;align-items:flex-start;margin-top:22px;background:var(--panel);border:2px dashed var(--accent);border-radius:14px;padding:14px 18px;scroll-margin-top:10px}
+.s3close .dot{color:var(--accent);flex:none;margin-top:4px}.s3close h3{margin:0 0 8px}
+@media (max-width:600px){.s3close{flex-direction:column;gap:4px;padding:12px 13px}}
+.s3syn{background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-top:6px}.s3syn p{font-style:italic}
+.s3gl,.s3gaps{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.88rem}
+.s3gl summary{cursor:pointer;font-weight:600}
+.s3gl dl{display:grid;grid-template-columns:minmax(8em,auto) minmax(0,1fr);gap:6px 14px;margin:10px 0 0}
+.s3gl dt{font-weight:700}.s3gl dt i{font-family:var(--f-pali);font-weight:400;color:var(--muted)}.s3gl dd{margin:0}
+@media (max-width:600px){.s3gl dl{grid-template-columns:minmax(0,1fr)}.s3gl dd{margin-bottom:6px}}
+.s3gaps h4{font-size:.8rem;margin:10px 0 2px;color:var(--muted)}.s3gaps ul{margin:0;padding-left:20px}.s3gaps p{margin:4px 0}
+.s3el{background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:4px;padding:6px 9px;font-size:.84rem;margin:8px 0}
+.s3el.n{background:var(--bg);border-left-color:var(--line)}
+.s3el a{color:var(--accent)}
+.s3links li.flash,.nbox.flash{animation:nflash 1.4s ease}
+.s3sec.flash{animation:nflash 1.4s ease}
+@media (max-width:600px){.s3node .lb{font-size:18px}.s3node.br .lb{font-size:15px}.s3node .sb{display:none}.s3hub text{font-size:17px}.s3hub text.s{font-size:15px}.s3hub text.r{font-size:14px}.s3lb text{font-size:13px}.s3dia{margin:0 -6px}}
+.ndrawer{visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s}.ndrawer.open{visibility:visible;transition:transform .22s ease}
+@media print{.s3top,.s3toc,.s3up,.s3told,.s3ld,.ndrawer,.nscrim{display:none!important}.s3sec,.s3fig{break-inside:avoid}.s3hero{border:0}.s3gl{display:block}}
+.thai .trn,.tl .trn,.spkbar .trn{text-decoration:underline;text-decoration-style:solid;text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer;border-radius:3px}
+.trn.high{text-decoration-color:var(--bad,#c0392b)}.trn.mid{text-decoration-color:var(--warn)}.trn.low{text-decoration-color:color-mix(in srgb,var(--warn) 55%,transparent)}
+.trn:hover{background:var(--warn-soft)}.trn.demo,.trn-i.demo{cursor:default}.trn.demo:hover{background:none}
+.trn-i{font-size:.66rem;margin-left:1px;cursor:pointer;color:var(--warn);font-weight:700}.trn-i.high{color:var(--bad,#c0392b)}
+.trn-b{font:600 .66rem var(--f-thai);margin-left:6px;padding:0 6px;border-radius:999px;border:1px solid var(--warn);background:var(--warn-soft);color:var(--ink);cursor:pointer;vertical-align:1px}
+.trn-b.high{border-color:var(--bad,#c0392b)}
+.pill.trnp{border-color:var(--warn);background:var(--warn-soft)}
+.thai .gloss,.tl .gloss{color:var(--muted);font-style:italic;opacity:.8}
+.spkbar.trnbar{display:block;line-height:1.9}.spkbar.trnbar .k{display:inline;margin-right:12px}
+#trnpop{position:fixed;z-index:60;left:50%;bottom:16px;transform:translate(-50%,130%);width:min(560px,calc(100vw - 24px));max-height:70vh;overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-top:4px solid var(--warn);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.35);padding:12px 16px 12px;transition:transform .2s ease;font-size:.92rem;visibility:hidden}
+#trnpop.open{transform:translate(-50%,0);visibility:visible}
+#trnpop .x{position:absolute;right:8px;top:6px;border:0;background:none;color:var(--muted);font-size:1.4rem;cursor:pointer}
+#trnpop .h{display:flex;gap:8px;align-items:center;margin-bottom:8px;padding-right:24px}#trnpop .h .k{font-weight:700}
+#trnpop .sv{font-size:.72rem;border-radius:999px;padding:1px 8px;background:var(--warn-soft)}#trnpop .sv.high{background:color-mix(in srgb,var(--bad,#c0392b) 22%,transparent)}
+#trnpop .r{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:8px;margin:5px 0;line-height:1.6}#trnpop .r b{font-size:.78rem;color:var(--muted);font-weight:600;padding-top:2px}
+#trnpop .r small a{font-family:var(--f-mono);font-size:.72rem;color:var(--accent)}
+#trnpop .f{margin-top:8px;font-size:.72rem;color:var(--muted);border-top:1px solid var(--line);padding-top:6px}
+.trnflag{margin-top:6px;font-size:.8rem;background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 6px 6px 0;padding:4px 9px}.trnflag.high{border-left-color:var(--bad,#c0392b)}
+.trnflag button{font:inherit;font-size:.78rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:0 8px;margin:2px 2px;cursor:pointer}
+.n3th .trn{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer}
+.n3note.trnn{margin-top:6px}
+.trnix{max-width:980px;margin:0 auto}.trnix h2{margin:4px 0}
+.trnf{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.trnf .sp{flex:1}
+.trnf button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:3px 11px;cursor:pointer}.trnf button.on{border-color:var(--accent);background:var(--accent);color:var(--panel)}
+.trns h3{margin:0 0 8px;font-size:1.08rem}.trns h3 small{font-weight:400;color:var(--muted);font-size:.78rem;margin-left:6px}.trns h3 a{color:var(--ink)}
+.trnr{border-left:4px solid color-mix(in srgb,var(--warn) 55%,transparent);padding:6px 10px;margin:8px 0;background:var(--bg);border-radius:0 8px 8px 0;font-size:.9rem}
+.trnr.mid{border-left-color:var(--warn)}.trnr.high{border-left-color:var(--bad,#c0392b)}
+.trnr .hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:4px}.trnr .hd .k{font-weight:700;font-size:.84rem}.trnr .hd .m{font-size:.74rem;color:var(--muted)}
+.trnr .sv{font-size:.72rem;border-radius:999px;padding:1px 8px;background:var(--warn-soft)}.trnr .sv.high{background:color-mix(in srgb,var(--bad,#c0392b) 22%,transparent)}
+.trnr .r{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:8px;margin:3px 0;line-height:1.6}.trnr .r b{font-size:.76rem;color:var(--muted);font-weight:600;padding-top:2px}
+.trnr .go{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:4px;font-size:.78rem}.trnr .go a{color:var(--accent)}.trnr .go .src{color:var(--muted);margin-left:auto}
+@media (max-width:600px){.trnr .r,#trnpop .r{grid-template-columns:minmax(0,1fr);gap:0}.trnf .sp{display:none}}
+#trnpop{z-index:80}
+.s3uv{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--other);border-radius:12px;padding:10px 16px;font-size:.92rem}.s3uv>b{display:block;font-size:.8rem;color:var(--other);margin-bottom:4px}.s3uv p{margin:4px 0}.s3uvc{display:block;font-size:.76rem;color:var(--muted)}
+.topnav a{white-space:nowrap}@media (max-width:600px){.topnav{flex-wrap:wrap;gap:6px}.topnav a{font-size:.8rem;padding:4px 9px}}
+</style>
 </head>
 <body>
-  <!-- Top Header & Topic Navigation Bar -->
-  <header class="top-header">
-    <div class="header-inner">
-      <div class="brand">
-        <div class="brand-emblem" aria-hidden="true">☸</div>
-        <div>
-          <h1 class="brand-title">พุทธพจน์ <span class="version-badge">v5.0</span></h1>
-          <p class="brand-subtitle">คลังพระดำรัสจากพระโอษฐ์ &amp; แผนภาพวงจรธรรมเชื่อมโยง</p>
-        </div>
-      </div>
 
-      <div class="header-controls">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="ค้นหาพุทธพจน์, หัวข้อ, พระไตรปิฎก..." aria-label="ค้นหาเนื้อหา" />
-          <button id="clearSearchBtn" class="icon-btn hidden" title="ล้างคำค้นหา">✕</button>
-        </div>
-        <div class="utility-btns">
-          <button id="togglePaliBtn" class="util-btn active" title="แสดง/ซ่อนคำบาลี">บาลี: เปิด</button>
-          <button id="fontDecreaseBtn" class="util-btn" title="ลดขนาดตัวอักษร">ก-</button>
-          <button id="fontIncreaseBtn" class="util-btn" title="เพิ่มขนาดตัวอักษร">ก+</button>
-          <button id="themeToggleBtn" class="util-btn" title="สลับโหมดสีหน้าจอ">🌓</button>
-        </div>
-      </div>
+<div class="wrap">
+  <header>
+    <h1><a href="#" id="homeLink" class="homelink" title="กลับหน้าแรก">ห้องอ่านพุทธพจน์</a> <span class="pill b" style="font-size:.74rem;vertical-align:middle;margin-left:4px">Gemini Edition</span> <small>ทีฆ · มัชฌิม · สังยุตต · อังคุตตร · ขุททกนิกาย (พุทธพจน์) · ฉบับหลวง</small></h1>
+    <nav class="topnav" aria-label="มุมมอง"><a href="#" data-v="read" class="on" id="navRead">อ่านและค้น</a><a href="#snote" data-v="note">Short note</a><a href="#trn" data-v="trn">หมายเหตุคำแปล</a><button type="button" id="themeBtn" class="themebtn" aria-label="สลับพื้นหลังสว่าง/มืด"></button></nav>
+    <div class="legend" aria-label="คำอธิบายสี">
+      <span><i class="sw" style="background:var(--buddha)"></i>พระดำรัส (A)</span>
+      <span><i class="sw" style="background:var(--endorse)"></i>มีสัญญาณรับรอง (B?)</span>
+      <span><i class="sw" style="background:var(--other)"></i>ผู้อื่นกล่าว</span>
+      <span><i class="sw" style="background:var(--warn)"></i>จับคู่ไทย–บาลีไม่แน่ชัด</span>
     </div>
-
-    <!-- Topic Tabs (แถบหัวข้อด้านบน) -->
-    <nav class="topic-nav" aria-label="หมวดหัวข้อธรรม">
-      <div class="topic-nav-inner" id="topicTabs"></div>
-    </nav>
   </header>
 
-  <!-- Evidence-Level Filter Bar (แถบตัวกรองระดับหลักฐาน) -->
-  <section class="filter-bar" aria-label="แถบตัวกรองระดับหลักฐาน">
-    <div class="filter-bar-inner">
-      <div class="filter-group">
-        <span class="filter-label">ระดับหลักฐาน:</span>
-        <div class="filter-pills" role="group" aria-label="ตัวกรองระดับหลักฐาน">
-          <button class="filter-pill active" data-filter="all" id="filterAllBtn">
-            <span class="dot dot-all"></span> ทั้งหมด (แสดงครบทุกชั้น)
-          </button>
-          <button class="filter-pill" data-filter="A" id="filterABtn">
-            <span class="tier-badge tier-a">A</span> พระดำรัส (พุทธพจน์ล้วน)
-          </button>
-          <button class="filter-pill" data-filter="editorial" id="filterEditorialBtn">
-            <span class="tier-badge tier-ed">ห้อง</span> เรียบเรียง (เชื่อมโยงอธิบาย)
-          </button>
-        </div>
-      </div>
+  <form class="searchbar" id="sf" role="search">
+    <input type="search" id="q" placeholder="ค้นคำไทย เช่น วิญญาณ, อนาคามี, ปรินิพพานในระหว่าง" aria-label="คำค้น" autocomplete="off">
+    <select id="lang" aria-label="ค้นในภาษา">
+      <option value="th">ไทย (ฉบับหลวง)</option><option value="p">บาลี</option><option value="e">อังกฤษ</option>
+    </select>
+    <select id="who" aria-label="กรองผู้พูด">
+      <option value="AU">พระดำรัส + คาถาที่ไม่ระบุผู้กล่าว</option>
+      <option value="A">เฉพาะพระดำรัส (เคร่ง)</option>
+      <option value="AB">พระดำรัส + B?</option>
+      <option value="all">ทุกผู้พูด</option>
+    </select>
+    <button class="primary" id="go" type="submit">ค้น</button>
+  </form>
+  <div class="status" id="status" aria-live="polite"></div>
 
-      <div class="filter-status" id="filterStatusText">
-        กำลังแสดง: <strong>ทั้งหมด</strong> (พระดำรัส + ส่วนเรียบเรียงเชื่อมโยง)
-      </div>
+  <div class="grid">
+    <nav class="side" aria-label="สารบัญ">
+      <h2>สารบัญ</h2>
+      <div id="toc"></div>
+    </nav>
+    <main id="main"></main>
+  </div>
+  <section id="noteview" hidden aria-label="Short note พุทธพจน์"></section>
+</div>
+
+<script>
+const SAM = {1:["Devatā","เทวตาสังยุต"],2:["Devaputta","เทวปุตตสังยุต"],3:["Kosala","โกสลสังยุต"],4:["Māra","มารสังยุต"],5:["Bhikkhunī","ภิกขุนีสังยุต"],6:["Brahma","พรหมสังยุต"],7:["Brāhmaṇa","พราหมณสังยุต"],8:["Vaṅgīsa","วังคีสสังยุต"],9:["Vana","วนสังยุต"],10:["Yakkha","ยักขสังยุต"],11:["Sakka","สักกสังยุต"],12:["Nidāna","นิทานสังยุต (อภิสมัย)"],13:["Abhisamaya","อภิสมยสังยุต"],14:["Dhātu","ธาตุสังยุต"],15:["Anamatagga","อนมตัคคสังยุต"],16:["Kassapa","กัสสปสังยุต"],17:["Lābhasakkāra","ลาภสักการสังยุต"],18:["Rāhula","ราหุลสังยุต"],19:["Lakkhaṇa","ลักขณสังยุต"],20:["Opamma","โอปัมมสังยุต"],21:["Bhikkhu","ภิกขุสังยุต"],22:["Khandha","ขันธสังยุต"],23:["Rādha","ราธสังยุต"],24:["Diṭṭhi","ทิฏฐิสังยุต"],25:["Okkanti","โอกกันติสังยุต"],26:["Uppāda","อุปปาทสังยุต"],27:["Kilesa","กิเลสสังยุต"],28:["Sāriputta","สารีปุตตสังยุต"],29:["Nāga","นาคสังยุต"],30:["Supaṇṇa","สุปัณณสังยุต"],31:["Gandhabba","คันธัพพกายสังยุต"],32:["Valāhaka","วลาหกสังยุต"],33:["Vacchagotta","วัจฉโคตตสังยุต"],34:["Jhāna (Samādhi)","สมาธิสังยุต"],35:["Saḷāyatana","สฬายตนสังยุต"],36:["Vedanā","เวทนาสังยุต"],37:["Mātugāma","มาตุคามสังยุต"],38:["Jambukhādaka","ชัมพุขาทกสังยุต"],39:["Sāmaṇḍaka","สามัณฑกสังยุต"],40:["Moggallāna","โมคคัลลานสังยุต"],41:["Citta","จิตตสังยุต"],42:["Gāmaṇi","คามณิสังยุต"],43:["Asaṅkhata","อสังขตสังยุต"],44:["Abyākata","อัพยากตสังยุต"],45:["Magga","มัคคสังยุต"],46:["Bojjhaṅga","โพชฌงคสังยุต"],47:["Satipaṭṭhāna","สติปัฏฐานสังยุต"],48:["Indriya","อินทริยสังยุต"],49:["Sammappadhāna","สัมมัปปธานสังยุต"],50:["Bala","พลสังยุต"],51:["Iddhipāda","อิทธิปาทสังยุต"],52:["Anuruddha","อนุรุทธสังยุต"],53:["Jhāna","ฌานสังยุต"],54:["Ānāpāna","อานาปานสังยุต"],55:["Sotāpatti","โสตาปัตติสังยุต"],56:["Sacca","สัจจสังยุต"]};
+const TH = '๐๑๒๓๔๕๖๗๘๙';
+const tdig = n => String(n).replace(/\d/g, d => TH[d]);
+const $ = s => document.querySelector(s);
+const state = {index:[], byId:{}, byGroup:{}, groups:{}, thai:{}, thaiNorm:{}, spk:{}, loadedAll:false, tab:'th', showSpk:true, bFilter:'all', showEn:true};
+try{ if(localStorage.getItem('bv-spk')==='0') state.showSpk = false; }catch(e){}
+try{ const t = localStorage.getItem('bv-tab'); if(t) state.tab = t; }catch(e){}
+try{ const t = localStorage.getItem('bv-par'); if(t) state.parMode = t === '1'; }catch(e){}
+try{ const bf = localStorage.getItem('bv-bflt'); if(bf && ['all','dim','only'].includes(bf)) state.bFilter = bf; }catch(e){}
+try{ const en = localStorage.getItem('bv-en'); if(en === '0') state.showEn = false; }catch(e){}
+
+const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ṁ|ṃ/g,'m').toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toHash = id => id.replace('.', '-');
+const fromHash = h => /^(dhp|iti)/.test(h) ? h : h.replace('-', '.');
+const gnum = g => +g.replace(/^[a-z]+/,'');
+const nkOf = id => id.match(/^[a-z]+/)[0];
+const NK = {dn:'ทีฆนิกาย', mn:'มัชฌิมนิกาย', sn:'สังยุตตนิกาย', an:'อังคุตตรนิกาย', dhp:'ขุททกนิกาย ธรรมบท', ud:'ขุททกนิกาย อุทาน', iti:'ขุททกนิกาย อิติวุตตกะ', snp:'ขุททกนิกาย สุตตนิบาต'};
+const KN = [['dhp','ธรรมบท','Dhammapada'],['ud','อุทาน','Udāna'],['iti','อิติวุตตกะ','Itivuttaka'],['snp','สุตตนิบาต','Suttanipāta']];
+const UNATTR = 'ไม่ระบุผู้กล่าวในตัวบท';
+const ANN = ['','เอกกนิบาต','ทุกนิบาต','ติกนิบาต','จตุกกนิบาต','ปัญจกนิบาต','ฉักกนิบาต','สัตตกนิบาต','อัฏฐกนิบาต','นวกนิบาต','ทสกนิบาต','เอกาทสกนิบาต'];
+const ANP = ['','Ekaka','Duka','Tika','Catukka','Pañcaka','Chakka','Sattaka','Aṭṭhaka','Navaka','Dasaka','Ekādasaka'];
+const ANV = {1:20,2:20,3:20,4:21,5:22,6:22,7:23,8:23,9:23,10:24,11:24};
+const MNV = [['มูลปริยายวรรค',1,10],['สีหนาทวรรค',11,20],['โอปัมมวรรค',21,30],['มหายมกวรรค',31,40],['จูฬยมกวรรค',41,50],['คหปติวรรค',51,60],['ภิกขุวรรค',61,70],['ปริพพาชกวรรค',71,80],['ราชวรรค',81,90],['พราหมณวรรค',91,100],['เทวทหวรรค',101,110],['อนุปทวรรค',111,120],['สุญญตวรรค',121,130],['วิภังควรรค',131,142],['สฬายตนวรรค',143,152]];
+const MNP = ['มูลปัณณาสก์','มัชฌิมปัณณาสก์','อุปริปัณณาสก์'];
+const THVOLS = [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const pad2 = v => String(v).padStart(2,'0');
+const place = meta => NK[meta.nk] && KN.some(k=>k[0]===meta.nk) ? NK[meta.nk] : meta.nk==='an' ? 'อังคุตตรนิกาย '+ANN[gnum(meta.g)] : meta.nk==='sn' ? SAM[gnum(meta.g)][1] : meta.nk==='mn' ? (() => { const n = gnum(meta.id), v = MNV.findIndex(x => n>=x[1] && n<=x[2]); return 'มัชฌิมนิกาย '+MNP[Math.floor(v/5)]+' · '+MNV[v][0]; })() : NK[meta.nk];
+const label = id => id.replace(/^sn(?=\d)/,'SN ').replace(/^dn/,'DN ').replace(/^mn/,'MN ').replace(/^an/,'AN ').replace(/^dhp/,'Dhp ').replace(/^ud/,'Ud ').replace(/^iti/,'Iti ').replace(/^snp/,'Snp ');
+const SURE = {title:1, range:1, 'order+title':1, order:1, sub:1};
+const confNote = how => SURE[how] ? null : how==='gap1'
+  ? 'จับคู่ข้อความไทยกับสูตรบาลีตามลำดับ (ชื่อสูตรในฉบับหลวงต่างจากบาลี) ส่วนใหญ่ถูก แต่ควรเทียบกับแท็บบาลีก่อนอ้างอิง'
+  : 'ข้อความไทยที่แสดงอาจไม่ใช่สูตรเดียวกับบาลี หรืออาจรวมหลายสูตร (มักเป็นช่วงไปยาลที่ย่อไว้) ให้ยึดแท็บบาลีเป็นหลัก';
+
+async function getJSON(path){
+  // ลองซ้ำเมื่อโหลดไม่สำเร็จ (เช่น 403 ชั่วคราวระหว่างที่ artifact เพิ่งอัปเดตรุ่น)
+  let r;
+  for(let k=0;k<3;k++){
+    try { r = await fetch(path, k ? {cache:'reload'} : undefined); if(r.ok) return r.json(); } catch(e) { r = {status: e.message}; }
+    await new Promise(res => setTimeout(res, 700*(k+1)));
+  }
+  throw new Error(path+' '+r.status);
+}
+async function loadGroup(g){
+  if(state.groups[g]) return state.groups[g];
+  const arr = await getJSON('data/'+nkOf(g)+'-'+g+'.json'); const m = {}; arr.forEach(s => m[s.id] = s.segs);
+  return (state.groups[g] = m);
+}
+async function loadThai(v){
+  if(state.thai[v]) return state.thai[v];
+  return (state.thai[v] = await getJSON('data/th-v'+pad2(v)+'.json'));
+}
+// ป้ายผู้พูดระดับประโยคของข้อความไทย (ทีฆนิกาย เล่ม ๙–๑๑ · มัชฌิมนิกาย เล่ม ๑๒–๑๔ · สังยุตตนิกาย เล่ม ๑๕–๑๙ · อังคุตตรนิกาย เล่ม ๒๐–๒๔)
+const SPKVOLS = [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const SPKNAME = {B:'พระผู้มีพระภาค', O:'ผู้อื่น', U:'ไม่ระบุผู้กล่าวในตัวบท (พุทธพจน์ตามการรวบรวมของคัมภีร์ ไม่ใช่ระดับ A)', N:'ผู้รวบรวม/บรรยาย', H:'หัวข้อฉบับหลวง', '?':'ยังไม่ระบุ'};
+async function loadSpk(v){
+  if(!SPKVOLS.includes(+v)) return null;
+  if(state.spk[v] !== undefined) return state.spk[v];
+  try { state.spk[v] = await getJSON('data/spk-v'+pad2(v)+'.json'); } catch(e) { state.spk[v] = null; }
+  return state.spk[v];
+}
+async function loadAln(v){
+  const k = 'a'+v;
+  if(state.spk[k] !== undefined) return state.spk[k];
+  try { state.spk[k] = SPKVOLS.includes(+v) ? await getJSON('data/aln-v'+pad2(v)+'.json') : null; } catch(e) { state.spk[k] = null; }
+  return state.spk[k];
+}
+function spkAt(spans, off){
+  let lo = 0, hi = spans.length - 1;
+  while(lo <= hi){ const m = (lo+hi)>>1, s = spans[m]; if(off < s[0]) hi = m-1; else if(off >= s[1]) lo = m+1; else return s[2]; }
+  return '?';
+}
+async function loadAll(kind){
+  if(kind==='th'){
+    const vs=THVOLS; let d=0;
+    await Promise.all(vs.map(async v => { await loadThai(v); d++; $('#status').textContent = `กำลังโหลดฉบับหลวง ${d}/${vs.length} เล่ม…`; }));
+    return;
+  }
+  if(state.loadedAll) return;
+  const gs = Object.keys(state.byGroup); let done = 0;
+  await Promise.all(gs.map(async g => { await loadGroup(g); done++; $('#status').textContent = `กำลังโหลดบาลี ${done}/${gs.length} หมวด…`; }));
+  state.loadedAll = true;
+}
+
+function renderTOC(){
+  const toc = $('#toc'); toc.innerHTML = '';
+  // ทีฆนิกาย: รายการสูตรโดยตรง
+  const dn = state.index.filter(s => s.nk==='dn');
+  if(dn.length){
+    const div = document.createElement('div'); div.className='grp';
+    const btn = document.createElement('button'); btn.type='button'; btn.setAttribute('aria-expanded','false');
+    btn.innerHTML = `<span><span class="gn">ทีฆนิกาย</span><br><span class="gp">Dīghanikāya · ฉบับหลวง เล่ม ๙–๑๑</span></span><span class="gc">${tdig(dn.length)} สูตร</span>`;
+    const ul = document.createElement('ul'); ul.className='slist'; ul.hidden = true;
+    btn.addEventListener('click', () => { ul.hidden = !ul.hidden; btn.setAttribute('aria-expanded', String(!ul.hidden)); if(!ul.dataset.f){ fillList(ul, dn); ul.dataset.f=1; } });
+    div.append(btn, ul); toc.append(div);
+  }
+  const mn = state.index.filter(s => s.nk==='mn');
+  if(mn.length){
+    const mDiv = document.createElement('div'); mDiv.className='grp';
+    const mBtn = document.createElement('button'); mBtn.type='button'; mBtn.setAttribute('aria-expanded','false');
+    mBtn.innerHTML = `<span><span class="gn">มัชฌิมนิกาย</span><br><span class="gp">Majjhimanikāya · ฉบับหลวง เล่ม ๑๒–๑๔</span></span><span class="gc">${tdig(MNV.length)} วรรค · ${tdig(mn.length)} สูตร</span>`;
+    const mBox = document.createElement('div'); mBox.className='sub'; mBox.hidden = true;
+    mBtn.addEventListener('click', () => { mBox.hidden = !mBox.hidden; mBtn.setAttribute('aria-expanded', String(!mBox.hidden)); });
+    mDiv.append(mBtn, mBox); toc.append(mDiv);
+    MNV.forEach(([name, a, b], vi) => {
+      const list = mn.filter(s => { const n = gnum(s.id); return n>=a && n<=b; });
+      const div = document.createElement('div'); div.className='grp';
+      const btn = document.createElement('button'); btn.type='button'; btn.setAttribute('aria-expanded','false');
+      btn.innerHTML = `<span><span class="gn">${tdig(vi+1)}. ${name}</span><br><span class="gp">${MNP[Math.floor(vi/5)]} · MN ${a}–${b}</span></span><span class="gc">${tdig(list.length)} สูตร</span>`;
+      const ul = document.createElement('ul'); ul.className='slist'; ul.hidden = true;
+      btn.addEventListener('click', () => { ul.hidden = !ul.hidden; btn.setAttribute('aria-expanded', String(!ul.hidden)); if(!ul.dataset.f){ fillList(ul, list); ul.dataset.f=1; } });
+      div.append(btn, ul); mBox.append(div);
+    });
+  }
+  const anGroups = Object.keys(state.byGroup).filter(g => g.startsWith('an')).sort((a,b)=>gnum(a)-gnum(b));
+  const snGroups = Object.keys(state.byGroup).filter(g => /^sn\d/.test(g));
+  const snDiv = document.createElement('div'); snDiv.className='grp';
+  const snBtn = document.createElement('button'); snBtn.type='button'; snBtn.setAttribute('aria-expanded','false');
+  const snCount = state.index.filter(s => s.nk==='sn').length;
+  snBtn.innerHTML = `<span><span class="gn">สังยุตตนิกาย</span><br><span class="gp">Saṃyuttanikāya · ฉบับหลวง เล่ม ๑๕–๑๙</span></span><span class="gc">${tdig(snGroups.length)} สังยุต · ${tdig(snCount)} สูตร</span>`;
+  const snBox = document.createElement('div'); snBox.className='sub'; snBox.hidden = true;
+  snBtn.addEventListener('click', () => { snBox.hidden = !snBox.hidden; snBtn.setAttribute('aria-expanded', String(!snBox.hidden)); });
+  snDiv.append(snBtn, snBox); toc.append(snDiv);
+  if(anGroups.length){
+    const aDiv = document.createElement('div'); aDiv.className='grp';
+    const aBtn = document.createElement('button'); aBtn.type='button'; aBtn.setAttribute('aria-expanded','false');
+    const anCount = state.index.filter(s => s.nk==='an').length;
+    aBtn.innerHTML = `<span><span class="gn">อังคุตตรนิกาย</span><br><span class="gp">Aṅguttaranikāya · ฉบับหลวง เล่ม ๒๐–๒๔</span></span><span class="gc">${tdig(anGroups.length)} นิบาต · ${tdig(anCount)} รายการ</span>`;
+    const aBox = document.createElement('div'); aBox.className='sub'; aBox.hidden = true;
+    aBtn.addEventListener('click', () => { aBox.hidden = !aBox.hidden; aBtn.setAttribute('aria-expanded', String(!aBox.hidden)); });
+    aDiv.append(aBtn, aBox); toc.append(aDiv);
+    anGroups.forEach(g => {
+      const list = state.byGroup[g]; const n = gnum(g);
+      const div = document.createElement('div'); div.className='grp';
+      const btn = document.createElement('button'); btn.type='button'; btn.setAttribute('aria-expanded','false');
+      btn.innerHTML = `<span><span class="gn">${tdig(n)}. ${ANN[n]}</span><br><span class="gp">${ANP[n]}nipāta · ฉบับหลวง เล่ม ${tdig(ANV[n])}</span></span><span class="gc">${tdig(list.length)} รายการ</span>`;
+      const ul = document.createElement('ul'); ul.className='slist'; ul.hidden = true;
+      btn.addEventListener('click', () => { ul.hidden = !ul.hidden; btn.setAttribute('aria-expanded', String(!ul.hidden)); if(!ul.dataset.f){ fillList(ul, list); ul.dataset.f=1; } });
+      div.append(btn, ul); aBox.append(div);
+    });
+  }
+  const knList = state.index.filter(s => KN.some(k => k[0]===s.nk));
+  if(knList.length){
+    const kDiv = document.createElement('div'); kDiv.className='grp';
+    const kBtn = document.createElement('button'); kBtn.type='button'; kBtn.setAttribute('aria-expanded','false');
+    kBtn.innerHTML = `<span><span class="gn">ขุททกนิกาย (เฉพาะพุทธพจน์)</span><br><span class="gp">ธรรมบท · อุทาน · อิติวุตตกะ · สุตตนิบาต · ฉบับหลวง เล่ม ๒๕</span></span><span class="gc">${tdig(knList.length)} รายการ</span>`;
+    const kBox = document.createElement('div'); kBox.className='sub'; kBox.hidden = true;
+    kBtn.addEventListener('click', () => { kBox.hidden = !kBox.hidden; kBtn.setAttribute('aria-expanded', String(!kBox.hidden)); });
+    kDiv.append(kBtn, kBox); toc.append(kDiv);
+    KN.forEach(([nk, th, pl]) => {
+      const list = knList.filter(s => s.nk===nk);
+      const div = document.createElement('div'); div.className='grp';
+      const btn = document.createElement('button'); btn.type='button'; btn.setAttribute('aria-expanded','false');
+      btn.innerHTML = `<span><span class="gn">${th}</span><br><span class="gp">${pl}</span></span><span class="gc">${tdig(list.length)} ${nk==='dhp'?'วรรค':'สูตร'}</span>`;
+      const ul = document.createElement('ul'); ul.className='slist'; ul.hidden = true;
+      btn.addEventListener('click', () => { ul.hidden = !ul.hidden; btn.setAttribute('aria-expanded', String(!ul.hidden)); if(!ul.dataset.f){ fillList(ul, list); ul.dataset.f=1; } });
+      div.append(btn, ul); kBox.append(div);
+    });
+  }
+  snGroups.filter(g => /^sn\d/.test(g)).sort((a,b)=>gnum(a)-gnum(b)).forEach(g => {
+    const list = state.byGroup[g]; const n = gnum(g);
+    const div = document.createElement('div'); div.className='grp';
+    const btn = document.createElement('button'); btn.type='button'; btn.setAttribute('aria-expanded','false');
+    btn.innerHTML = `<span><span class="gn">${tdig(n)}. ${SAM[n][1]}</span><br><span class="gp">${SAM[n][0]}saṃyutta</span></span><span class="gc">${tdig(list.length)} สูตร</span>`;
+    const ul = document.createElement('ul'); ul.className='slist'; ul.hidden = true;
+    btn.addEventListener('click', () => { ul.hidden = !ul.hidden; btn.setAttribute('aria-expanded', String(!ul.hidden)); if(!ul.dataset.f){ fillList(ul, list); ul.dataset.f=1; } });
+    div.append(btn, ul); snBox.append(div);
+  });
+}
+function fillList(ul, list){
+  ul.innerHTML = list.map(s => {
+    const pct = s.n ? Math.round(100*s.b/s.n) : 0;
+    const name = s.tt || s.tp || s.te || '(ไม่มีชื่อในฉบับหลวง)';
+    return `<li><a href="#${toHash(s.id)}" data-id="${s.id}" title="${esc(s.tp)} · พระดำรัส ${pct}% ของท่อนบาลี"><span class="sid">${label(s.id)}</span><span style="flex:1;min-width:0">${esc(name)}</span>${SURE[s.how]||s.how==='gap1'?'':'<i class="dot" aria-label="จับคู่ไม่แน่ชัด"></i>'}<span class="bar"><i style="width:${pct}%"></i></span></a></li>`;
+  }).join('');
+}
+
+function cls(seg){ if(seg.s==='H') return 'H'; if(seg.s==='B') return 'B'; if(seg.l==='B?') return 'Bq'; if(seg.s==='N') return 'N'; return 'O'; }
+function whoLabel(seg){
+  if(seg.s==='B') return ['พระพุทธเจ้า','A'];
+  if(seg.s==='N') return null;
+  const n = seg.s==='listeners' ? 'ผู้ฟัง' : (seg.s==='?'||seg.s.startsWith('unknown')) ? 'ไม่ทราบผู้พูด' : seg.s;
+  return [n, seg.l==='B?' ? 'B?' : '—'];
+}
+function hlFold(html, term){
+  const t = fold(term); if(!t) return html;
+  let f = '', map = [];
+  for(let i=0;i<html.length;i++){ const fc = fold(html[i]); for(let k=0;k<fc.length;k++){ f += fc[k]; map.push(i); } }
+  let out = '', last = 0, from = 0, pos;
+  while((pos = f.indexOf(t, from)) !== -1){ const a = map[pos], b = map[pos+t.length-1]+1; if(a < last){ from = pos+1; continue; } out += html.slice(last,a)+'<mark>'+html.slice(a,b)+'</mark>'; last = b; from = pos+t.length; }
+  return out + html.slice(last);
+}
+function segHTML(seg, prev, terms){
+  const c = cls(seg); if(c==='H') return '';
+  let who = '';
+  if((!prev || prev.s!==seg.s || prev.l!==seg.l) && c!=='N'){ const w = whoLabel(seg); if(w) who = `<div class="who">${esc(w[0])} <span class="tag">${w[1]}</span></div>`; }
+  const hl = t => { let h = esc(t); (terms||[]).forEach(tm => h = hlFold(h, tm)); return h; };
+  return `<div class="seg ${c}" data-id="${seg.i}">${who}<div class="p" lang="pi">${hl(seg.p)}</div><div class="e" lang="en">${hl(seg.e)}</div><div class="segid">${seg.i}${trnBadge((state.trnSeg || {})[seg.i])}<button type="button" class="cpseg" data-cp="${esc(seg.i)}" title="คัดลอกรหัสท่อนและข้อความ">คัดลอก</button></div></div>`;
+}
+function thaiChunk(str, first, term){
+  let h = esc(str);
+  if(first) h = h.replace(/^\[([๐-๙]+)\]\s*/, (m,k) => `<span class="kho">[${k}]</span>`);
+  h = h.replace(/\[([^\]๐-๙<][^\]<]{0,120})\]/g, '<span class="gloss" title="คำเสริมของผู้แปลฉบับหลวง ไม่มีในบาลี">[$1]</span>');
+  h = h.replace(/\((?![๐-๙\s.,]+\))([^()<]{1,120})\)/g, '<span class="gloss" title="คำในวงเล็บของผู้แปลฉบับหลวง ไม่มีในบาลี">($1)</span>');
+  if(term) h = hlThai(h, term);
+  return h;
+}
+// spans = [[เริ่ม, จบ, ป้าย]] ในพิกัดของข้อความทั้งหน่วย; base = ตำแหน่งของ text ในหน่วยนั้น
+function thaiHTML(text, term, spans, base){
+  let off = base || 0;
+  return text.split('\n').map(p => {
+    const p0 = off; off += p.length + 1;
+    if(!spans) return `<p data-o="${p0}">${thaiChunk(p, true, term)}</p>`;
+    let h = '', i = 0;
+    while(i < p.length){
+      const code = spkAt(spans, p0 + i);
+      let j = i + 1;
+      // หาจุดสิ้นสุดของช่วงป้ายนี้ภายในย่อหน้า
+      const sp = spans.find(s => p0 + i >= s[0] && p0 + i < s[1]);
+      j = sp ? Math.min(p.length, sp[1] - p0) : p.length;
+      if(j <= i) j = p.length;
+      const cls = code === '?' ? 'Q' : code;
+      h += `<span class="sp ${cls}" title="${SPKNAME[code]||''}">${thaiChunk(p.slice(i, j), i === 0, term)}</span>`;
+      i = j;
+    }
+    return `<p data-o="${p0}">${h}</p>`;
+  }).join('');
+}
+// ค้นไทยแบบไม่สนช่องว่าง: แผนที่ตำแหน่งระหว่างข้อความเดิมกับข้อความที่ตัดช่องว่าง
+function normThai(s){ let n='', map=[]; for(let i=0;i<s.length;i++){ const c=s[i]; if(/[\s\u200b]/.test(c)) continue; n += c; map.push(i); } return [n, map]; }
+const qThai = q => q.replace(/[\s\u200b]+/g,'').replace(/ํา/g,'ำ');
+function hlThai(html, term){
+  const t = qThai(term); if(!t) return html;
+  const [n, map] = normThai(html);
+  let out='', last=0, from=0, pos;
+  while((pos = n.indexOf(t, from)) !== -1){ const a = map[pos], b = map[pos+t.length-1]+1; if(a<last){from=pos+1;continue;} out += html.slice(last,a)+'<mark>'+html.slice(a,b)+'</mark>'; last=b; from=pos+t.length; }
+  return out + html.slice(last);
+}
+
+let pendingFocus = null, pendingTerm = null, pendingSec = null;
+function secOfOffset(meta, off){ if(!meta.sec) return null; let n = 0; meta.sec.forEach((sc,i) => { if(sc.c <= off) n = i; }); return n; }
+function secTitle(sc, n){ return n===0 && !sc.he ? 'บทนำ' : (sc.h || sc.he || sc.hp); }
+function secMeta(sc){
+  const who = sc.b >= 50 ? `<b>พระดำรัส ${sc.b}%</b>` : `พระดำรัส ${sc.b}%${sc.w && sc.w.length ? ' · ผู้พูดหลัก: '+esc(sc.w[0]==='listeners'?'ผู้ฟัง':sc.w[0]) : ''}`;
+  return `${sc.hp?`<i>${esc(sc.hp)}</i> · `:''}${who}`;
+}
+function secTOC(meta){
+  if(!meta.sec || meta.sec.length < 2) return '';
+  const items = meta.sec.map((sc,n) => `<li><a href="#" data-sec="${n}">${esc(secTitle(sc,n))}</a> <span class="sp">${sc.b>=50?'พระดำรัส':'ผู้อื่น/บรรยาย'} ${sc.b}%</span></li>`).join('');
+  return `<details class="sectoc"${meta._secOpen===false?'':' open'}><summary>สารบัญในสูตร · ${tdig(meta.sec.length)} ตอน</summary><ol start="0">${items}</ol>
+    <div class="tnote">แบ่งตอนตามฉบับบาลี ชื่อตอนเป็นหัวข้อช่วยอ่าน (แปลจากหัวข้อของบรรณาธิการ ไม่ใช่พระไตรปิฎก) ${meta.secv?'· จุดเริ่มตอนในฉบับหลวงตรวจทานแล้ว':'· จุดเริ่มตอนในฉบับหลวงเป็นการประมาณ อาจคลาดหนึ่งประโยค'} · % พระดำรัสคิดจากป้ายผู้พูดอัตโนมัติของบาลีในตอนนั้น</div></details>`;
+}
+// ===== ชั้นหมายเหตุคำแปล (Phase 2 · 3E) =====
+// data/trn.json = {สูตร: [{id, k, sev, seg[], th, p, n, w, src, at:[[หน่วย, เริ่ม, จบ]]}]}
+let TRN = null;
+async function loadTrn(){ if(TRN) return TRN; try { TRN = await getJSON('data/trn.json'); } catch(e) { TRN = {}; } return TRN; }
+const TRNK = {tr:'คำแปลคลาดจากบาลี', add:'คำที่ผู้แปลเติม ไม่มีในบาลี', typo:'พิมพ์ผิดในฉบับหลวง', var:'บาลีต่างฉบับ'};
+const TRNS = {high:'ความหมายกลับด้าน', mid:'เปลี่ยนความ', low:'เล็กน้อย'};
+const trnSegMap = id => { const m = {}; ((TRN || {})[id] || []).forEach(n => (n.seg || []).forEach(s => (m[s] = m[s] || []).push(n))); return m; };
+const trnBadge = ns => ns && ns.length ? ns.map(n => `<button type="button" class="trn-b ${n.sev || 'low'}" data-trn="${esc(n.id)}" title="${esc(TRNK[n.k] || 'หมายเหตุคำแปล')} · กดดูรายละเอียด">หมายเหตุ</button>`).join('') : '';
+// ขีดใต้ข้อความไทยที่มีหมายเหตุ: ทุก [data-o] ใน root (ย่อหน้า / ช่องไทยของมุมมองคู่ขนาน) · หน่วย = .thu[data-u] หรือ defU
+function markTrn(root, id, defU){
+  root && root.setAttribute('data-trs', id);
+  const notes = (TRN || {})[id]; if(!notes || !root) return 0;
+  let n = 0;
+  root.querySelectorAll('[data-o]').forEach(el => {
+    const tu = el.closest('.thu'), u = tu ? +tu.dataset.u : defU, o = +el.dataset.o, len = el.textContent.length;
+    notes.forEach(nt => (nt.at || []).forEach(([uu, a, b]) => {
+      if(uu !== u || b <= o || a >= o + len) return;
+      wrapRange(el, Math.max(0, a - o), Math.min(len, b - o), nt, b <= o + len); n++;
+    }));
+  });
+  return n;
+}
+function wrapRange(el, a, b, nt, last){
+  const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); const parts = []; let pos = 0, t;
+  while((t = tw.nextNode())){ const L = t.nodeValue.length; if(pos + L > a && pos < b) parts.push([t, Math.max(0, a - pos), Math.min(L, b - pos)]); pos += L; }
+  parts.forEach(([t, x, y], i) => {
+    let mid = t; if(x > 0) mid = t.splitText(x); if(y - x < mid.nodeValue.length) mid.splitText(y - x);
+    const sp = document.createElement('span'); sp.className = 'trn ' + (nt.sev || 'low'); sp.dataset.trn = nt.id; sp.title = (TRNK[nt.k] || 'หมายเหตุคำแปล') + ' · กดดูรายละเอียด';
+    mid.parentNode.insertBefore(sp, mid); sp.appendChild(mid);
+    if(last && i === parts.length - 1){ const s = document.createElement('sup'); s.className = 'trn-i ' + (nt.sev || 'low'); s.dataset.trn = nt.id; s.textContent = '※'; sp.after(s); }
+  });
+}
+function trnPop(id, nid, ev){
+  const nt = ((TRN || {})[id] || []).find(x => x.id === nid); if(!nt) return;
+  let pp = $('#trnpop'); if(!pp){ pp = document.createElement('aside'); pp.id = 'trnpop'; pp.setAttribute('role', 'dialog'); document.body.appendChild(pp); }
+  const segs = (nt.seg || []).map(s => `<a href="#${toHash(id)}@${esc(s)}">${esc(s)}</a>`).join(' · ');
+  pp.innerHTML = `<button type="button" class="x" aria-label="ปิด">×</button>
+    <div class="h"><span class="k">${esc(TRNK[nt.k] || 'หมายเหตุคำแปล')}</span><span class="sv ${nt.sev || 'low'}">${esc(TRNS[nt.sev] || '')}</span></div>
+    ${nt.th ? `<div class="r"><b>ฉบับหลวง</b><span>“${esc(nt.th)}”</span></div>` : ''}
+    ${nt.p ? `<div class="r"><b>บาลี</b><span lang="pi"><i>${esc(nt.p)}</i>${segs ? `<br><small>${segs}</small>` : ''}</span></div>` : segs ? `<div class="r"><b>ท่อนบาลี</b><span>${segs}</span></div>` : ''}
+    <div class="r"><b>ข้อสังเกต</b><span>${esc(nt.n || '')}</span></div>
+    ${nt.w ? `<div class="r"><b>ควรอ่านว่า</b><span>${esc(nt.w)}</span></div>` : ''}
+    <div class="f"><a href="#trn">ดูหมายเหตุคำแปลทั้งหมด ↗</a> · หมายเหตุนี้ไม่แก้ตัวบทฉบับหลวง · ที่มา: ${esc(nt.src || 'ห้องสนทนา')} · ห้องควบคุมตรวจบาลีแล้ว · ${esc(nt.id)}</div>`;
+  pp.classList.add('open'); pp.querySelector('.x').onclick = () => pp.classList.remove('open');
+  pp.querySelectorAll('a').forEach(a => a.addEventListener('click', () => pp.classList.remove('open')));
+}
+document.addEventListener('click', ev => {
+  const t = ev.target.closest('[data-trn]');
+  if(t){ ev.preventDefault(); ev.stopPropagation(); const r = t.dataset.trs ? t : t.closest('[data-trs]'); trnPop(r ? r.dataset.trs : state.curId, t.dataset.trn, ev); return; }
+  const pp = $('#trnpop'); if(pp && pp.classList.contains('open') && !ev.target.closest('#trnpop')) pp.classList.remove('open');
+}, true);
+document.addEventListener('keydown', ev => { if(ev.key === 'Escape'){ const pp = $('#trnpop'); if(pp) pp.classList.remove('open'); } });
+
+// หน้ารวมหมายเหตุคำแปล (#trn)
+async function showTrnIndex(){
+  setView('trn'); state.noteId = 'trn';
+  const nv = $('#noteview'); nv.innerHTML = '<div class="card">กำลังโหลดหมายเหตุ…</div>';
+  await loadTrn();
+  const flt = state.trnFlt || 'all', rows = [];
+  Object.entries(TRN).forEach(([sid, ns]) => ns.forEach(n => rows.push({sid, n})));
+  const cnt = k => rows.filter(r => r.n.sev === k).length, nk = s => ({dn:0, mn:1, sn:2, an:3})[nkOf(s)] ?? 4;
+  const order = (x, y) => nk(x.sid) - nk(y.sid) || x.sid.localeCompare(y.sid, undefined, {numeric:true}) || x.n.id.localeCompare(y.n.id);
+  const shown = rows.filter(r => flt === 'all' || r.n.sev === flt || r.n.k === flt).sort(order);
+  const by = new Map(); shown.forEach(r => { if(!by.has(r.sid)) by.set(r.sid, []); by.get(r.sid).push(r.n); });
+  const btn = (k, t) => `<button type="button" data-f="${k}"${flt === k ? ' class="on"' : ''}>${t}</button>`;
+  let h = `<div class="trnix"><h2>หมายเหตุคำแปลฉบับหลวง</h2>
+    <p class="s3sub">คำแปลคลาดจากบาลี คำที่ผู้แปลเติม คำพิมพ์ผิด และบาลีต่างฉบับ ที่ห้องสนทนาพบระหว่างศึกษา และห้องควบคุมตรวจกับบาลีแล้ว ${tdig(rows.length)} รายการ ใน ${tdig(Object.keys(TRN).length)} พระสูตร · หมายเหตุไม่แก้ตัวบทฉบับหลวง แต่ขีดเส้นใต้ไว้ที่ข้อความนั้นในแท็บฉบับหลวง</p>
+    <div class="trnf">${btn('all', 'ทั้งหมด')}${btn('high', `ความหมายกลับด้าน ${tdig(cnt('high'))}`)}${btn('mid', `เปลี่ยนความ ${tdig(cnt('mid'))}`)}${btn('low', `เล็กน้อย ${tdig(cnt('low'))}`)}<span class="sp"></span>${btn('tr', TRNK.tr)}${btn('add', 'คำเติม')}${btn('typo', 'พิมพ์ผิด')}${btn('var', 'ต่างฉบับ')}</div>`;
+  by.forEach((ns, sid) => {
+    const m = state.byId[sid] || {};
+    h += `<section class="card trns"><h3><a href="#${toHash(sid)}">${esc(m.tt || m.tp || sid)}</a> <small>${esc(label(sid))} · ${esc(nkName(sid))}</small></h3>` + ns.map(n => `<div class="trnr ${n.sev || 'low'}">
+      <div class="hd"><span class="sv ${n.sev || 'low'}">${esc(TRNS[n.sev] || '')}</span><span class="k">${esc(TRNK[n.k] || '')}</span>${(n.at || []).length > 1 ? `<span class="m">${tdig(n.at.length)} แห่งในสูตร</span>` : ''}</div>
+      ${n.th ? `<div class="r"><b>ฉบับหลวง</b><span>“${esc(n.th)}”</span></div>` : ''}${n.p ? `<div class="r"><b>บาลี</b><span lang="pi"><i>${esc(n.p)}</i></span></div>` : ''}
+      <div class="r"><b>ข้อสังเกต</b><span>${esc(n.n || '')}</span></div>${n.w ? `<div class="r"><b>ควรอ่านว่า</b><span>${esc(n.w)}</span></div>` : ''}
+      <div class="go">${(n.seg || []).slice(0, 1).map(s => `<a href="#${toHash(sid)}@${esc(s)}!th">ดูในฉบับหลวง ↗</a><a href="#${toHash(sid)}@${esc(s)}">ท่อนบาลี ${esc(s)} ↗</a>`).join('')}<span class="src">${esc(n.src || '')} · ${esc(n.id)}</span></div></div>`).join('') + '</section>';
+  });
+  nv.innerHTML = h + (by.size ? '' : '<div class="card">ไม่มีรายการในหมวดนี้</div>') + '<p class="nfoot">ส่งหมายเหตุใหม่ได้ด้วยบล็อก 📮 ตามแบบฟอร์มในเอกสาร claude/กล่องรับ-บันทึกส่งห้องควบคุม.md</p></div>';
+  nv.querySelectorAll('.trnf button').forEach(b => b.onclick = () => { state.trnFlt = b.dataset.f; showTrnIndex(); });
+  window.scrollTo(0, 0);
+}
+
+async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
+  await loadTrn(); state.curId = id; state.trnSeg = trnSegMap(id);
+  const nTrn = ((TRN || {})[id] || []).length;
+  let curSec = (secN!=null && state.byId[id] && state.byId[id].sec && state.byId[id].sec.length>1) ? secN : null;
+  const meta = state.byId[id];
+  if(!meta){ $('#main').innerHTML = `<div class="card">ไม่พบสูตร ${esc(id)}</div>`; return; }
+  document.querySelectorAll('.slist a.on').forEach(a=>a.classList.remove('on'));
+  const a = document.querySelector(`.slist a[data-id="${CSS.escape(id)}"]`); if(a) a.classList.add('on');
+  if(focusSeg) state.tab = 'pe';
+  if(focusTh) state.tab = 'th';
+  $('#main').innerHTML = `<div class="card">กำลังเปิด ${esc(id)}…</div>`;
+  const pct = meta.n ? Math.round(100*meta.b/meta.n) : 0;
+  let thUnits = [];
+  if(meta.th){ const arr = await loadThai(meta.th[0]); thUnits = meta.th[1].map(i => arr[i]).filter(Boolean); }
+  const SPv = meta.th ? ((await loadSpk(meta.th[0])) || {}) : {};
+  const uSpans = meta.th ? meta.th[1].map(i => SPv[i] || null) : [];  // ป้ายผู้พูดรายหน่วยไทย (สูตรที่ไทยแยกหลายหน่วยก็มีได้)
+  const spans = thUnits.length === 1 ? uSpans[0] : null, anySpk = uSpans.some(Boolean);
+  const u0 = thUnits[0];
+  const alnPts = meta.th && thUnits.length === 1 ? (((await loadAln(meta.th[0])) || {})[meta.th[1][0]] || null) : null;
+  const hasPar = !!(alnPts && alnPts.length > 2);
+  if(state.tab === 'pt' && !hasPar) state.tab = 'th';
+  const where = u0 ? `ฉบับหลวง เล่ม ${tdig(meta.th[0])}${u0.pg?` หน้า ${tdig(u0.pg[0])}${u0.pg[1]!==u0.pg[0]?'–'+tdig(thUnits[thUnits.length-1].pg?.[1]||u0.pg[1]):''}`:''}${u0.k?` ข้อ ${tdig(u0.k[0])}${thUnits[thUnits.length-1].k&&thUnits[thUnits.length-1].k[1]!==u0.k[0]?'–'+tdig(thUnits[thUnits.length-1].k[1]):''}`:''}` : 'ยังไม่มีข้อความไทย';
+  const shared = u0 && u0.sc.length > 1 ? `ข้อความไทยตอนนี้ครอบคลุม ${u0.sc.length} สูตรในบาลี (${u0.sc.slice(0,4).join(', ')}${u0.sc.length>4?'…':''})` : '';
+  const note = confNote(meta.how);
+  const others = (meta.o||[]).filter(x => x && x.length < 40 && !x.startsWith('unknown') && x!=='?' && x!==UNATTR).slice(0,3).map(x => x==='listeners'?'ผู้ฟัง':x);
+  const back = state.fromMap ? `<button type="button" class="backbtn" id="backbtn">← กลับ Short note</button>` : fromSearch && state.lastSearch ? `<button type="button" class="backbtn" id="backbtn">← กลับไปผลค้นหา “${esc(state.lastSearch.raw)}”</button>` : '';
+  let html = `<article class="card">${back}<div class="sh"><h2>${esc(meta.tt || meta.tp)}</h2><div class="pt">${esc(meta.tp)} · ${esc(meta.te)}</div></div>
+  <div class="meta"><span>${label(id)}</span><span>${place(meta)}</span><span>${where}</span><a href="https://suttacentral.net/${id}/en/sujato" target="_blank" rel="noopener">SuttaCentral ↗</a></div>
+  <div class="facts"><span class="pill b">พระดำรัส ${pct}% ของท่อนบาลี</span>${meta.bq?`<span class="pill q">มีท่อน B? ${meta.bq}</span>`:''}${meta.u?`<span class="pill w" title="ตัวบทไม่มีบทบรรยายบอกว่าใครกล่าว ถือเป็นพุทธพจน์ตามการรวบรวมของคัมภีร์ ไม่ใช่หลักฐานระดับ A">ไม่ระบุผู้กล่าวในตัวบท ${Math.round(100*meta.u/meta.n)}%</span>`:''}${others.length?`<span class="pill">ผู้พูดอื่น: ${esc(others.join(', '))}</span>`:''}${note?'<span class="pill w">จับคู่ไม่แน่ชัด</span>':''}${nTrn?`<span class="pill trnp" title="คำแปลคลาด คำที่ผู้แปลเติม หรือคำพิมพ์ผิดในฉบับหลวง ที่ห้องสนทนาพบและห้องควบคุมตรวจกับบาลีแล้ว">หมายเหตุคำแปล ${tdig(nTrn)} รายการ</span>`:''}</div>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-t="th" aria-selected="${state.tab==='th'}">ฉบับหลวง (ไทย)</button>
+    <button type="button" role="tab" data-t="pe" aria-selected="${state.tab==='pe'}">บาลี–อังกฤษ แยกสีผู้พูด</button>${hasPar ? `<button type="button" role="tab" data-t="pt" aria-selected="${state.tab==='pt'}">คู่ขนาน บาลี–ไทย</button>` : ''}</div>${(meta._secOpen = curSec==null, secTOC(meta))}
+  <div class="bfltbar" id="bfltbar">
+    <span class="lbl">โหมดอ่านพุทธพจน์:</span>
+    <span class="bfltgrp" role="group" aria-label="ตัวกรองพุทธพจน์">
+      <button type="button" data-bf="all"${state.bFilter==='all'?' class="on"':''}>แสดงทั้งหมด</button>
+      <button type="button" data-bf="dim"${state.bFilter==='dim'?' class="on"':''}>เน้นพุทธพจน์ (หรี่บริบท)</button>
+      <button type="button" data-bf="only"${state.bFilter==='only'?' class="on"':''}>เฉพาะพุทธพจน์ล้วน (B)</button>
+    </span>
+    <span id="bfltstat"></span>
+    <label class="en-tog" id="entogWrap"${state.tab==='th'?' hidden':''}><input type="checkbox" id="entog"${state.showEn?' checked':''}> แสดงอังกฤษ</label>
+  </div>
+  <div id="tabbody"></div>
+  <p class="note">ป้ายผู้พูดและสีมาจากการวิเคราะห์บาลีอัตโนมัติ (ยังไม่ได้ตรวจทีละท่อน) ${anySpk ? 'ข้อความไทยของสูตรนี้รับป้ายผู้พูดจากบาลีรายประโยค (จับคู่อัตโนมัติ)' : 'ข้อความไทยจับคู่กับบาลีระดับพระสูตร ไม่ใช่ทีละประโยค'}</p></article>`;
+  $('#main').innerHTML = html;
+  const bb = $('#backbtn'); if(bb) bb.addEventListener('click', () => { if(state.fromMap){ location.hash = '#' + state.fromMap; return; } if(location.hash) history.back(); else restoreSearch(); });
+  const body = $('#tabbody');
+  const applyBFilter = () => {
+    body.classList.remove('bf-dim', 'bf-only');
+    if(state.bFilter === 'dim') body.classList.add('bf-dim');
+    if(state.bFilter === 'only') body.classList.add('bf-only');
+    body.classList.toggle('hide-en', !state.showEn);
+    const ew = $('#entogWrap'); if(ew) ew.hidden = (state.tab === 'th');
+    $('#bfltbar').querySelectorAll('[data-bf]').forEach(b => b.classList.toggle('on', b.dataset.bf === state.bFilter));
+    const st = $('#bfltstat');
+    if(!st) return;
+    if(state.tab === 'th'){
+      body.querySelectorAll('.pblk').forEach(blk => {
+        const hasB = !!blk.querySelector('.sp.B');
+        blk.classList.toggle('no-b', !hasB);
+      });
+      const hid = body.querySelectorAll('.pblk.no-b').length;
+      st.textContent = state.bFilter === 'only' ? (hid ? `ซ่อน ${tdig(hid)} ย่อหน้าที่ไม่มีพระดำรัส` : 'แสดงเฉพาะช่วงพระดำรัส') : '';
+    } else {
+      const total = body.querySelectorAll('.seg, .pr-row:not(.H)').length;
+      const bud = body.querySelectorAll('.seg.B, .pr-row.B').length;
+      st.textContent = total ? `พระดำรัส ${tdig(bud)} / ${tdig(total)} ท่อน` : '';
+    }
+  };
+  $('#bfltbar').querySelectorAll('[data-bf]').forEach(b => b.addEventListener('click', () => {
+    state.bFilter = b.dataset.bf;
+    try{ localStorage.setItem('bv-bflt', state.bFilter); }catch(e){}
+    applyBFilter();
+  }));
+  const entog = $('#entog');
+  if(entog) entog.addEventListener('change', () => {
+    state.showEn = entog.checked;
+    try{ localStorage.setItem('bv-en', state.showEn ? '1' : '0'); }catch(e){}
+    applyBFilter();
+  });
+  body.addEventListener('click', ev => {
+    const cp = ev.target.closest('.cpseg');
+    if(!cp) return;
+    ev.stopPropagation();
+    const sid = cp.dataset.cp;
+    const row = cp.closest('.pr-row') || cp.closest('.seg');
+    let txt = `[${sid}]`;
+    if(row){
+      const p = row.querySelector('.pp, .p')?.textContent?.trim() || '';
+      const t = row.querySelector('.tl')?.textContent?.trim() || '';
+      if(p) txt += ` ${p}`;
+      if(t && t !== '〃') txt += ` — “${t}”`;
+    }
+    navigator.clipboard?.writeText(txt);
+    const old = cp.textContent; cp.textContent = '✓ คัดลอกแล้ว'; cp.classList.add('ok');
+    setTimeout(() => { cp.textContent = old; cp.classList.remove('ok'); }, 1200);
+  });
+  const navHTML = () => {
+    if(curSec==null) return '';
+    const S = meta.sec, n = curSec;
+    return `<div class="secnav"><span class="where">ตอนที่ ${tdig(n)} จาก ${tdig(S.length-1)} · แสดงเฉพาะตอนนี้</span>${n>0?`<button type="button" data-go="${n-1}">‹ ตอนก่อน</button>`:''}${n<S.length-1?`<button type="button" data-go="${n+1}">ตอนถัดไป ›</button>`:''}<button type="button" data-go="all">อ่านทั้งสูตร</button></div>`;
+  };
+  const bindNav = () => body.querySelectorAll('.secnav button').forEach(b => b.addEventListener('click', () => {
+    curSec = b.dataset.go==='all' ? null : +b.dataset.go; term = b.dataset.go==='all' ? term : null; renderTab().then(() => { applyBFilter(); const el = curSec==null ? document.getElementById('sec-'+(+b.dataset.go||0)) : $('#tabbody'); if(el) el.scrollIntoView({block:'start'}); });
+  }));
+  const renderTab = async () => {
+    $('#main').querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.t===state.tab || (b.dataset.t==='pe' && state.tab!=='th' && state.tab!=='pt'))));
+    if(state.tab==='pt'){
+      body.innerHTML = 'กำลังจัดคู่…';
+      const segs = (await loadGroup(meta.g))[id] || [], X = thUnits[0].x;
+      const pts = [...alnPts].sort((a, b) => a[0] - b[0]), span = {}, heads = [];
+      pts.forEach((pt, i) => { const e = i + 1 < pts.length ? pts[i + 1][0] : X.length; if(pt[1] < 0) heads.push([pt[0], pt[2] && pt[2] < e ? pt[2] : e]); else span[pt[1]] = [pt[0], e]; });
+      let hi = 0;
+      const headRows = upto => { let r = ''; while(hi < heads.length && heads[hi][0] < upto){ const t = X.slice(heads[hi][0], heads[hi][1]).trim(); if(t) r += `<div class="pr-row H"><div class="pl"><span class="sid">ไม่มีในบาลี</span></div><div class="tl"><span class="hh">หัวข้อที่ผู้แปลฉบับหลวงเติม:</span> ${esc(t)}</div></div>`; hi++; } return r; };
+      const secIdx = {}; (meta.sec||[]).forEach((sc,n) => secIdx[sc.i] = n);
+      let cur = 0, h = `<div class="focusnote" style="margin-bottom:8px">จับคู่ท่อนบาลีกับประโยคไทยอัตโนมัติ (Phase 3A) · ช่องไทยที่ว่าง = ไทยรวมอยู่กับท่อนข้างเคียง · ถ้าเห็นคู่ที่คลาด แจ้งรหัสท่อนด้านซ้ายใน 📮 แบบ [จับคู่]</div>` + (curSec!=null ? navHTML() : '') + '<div class="par">';
+      segs.forEach((sg, k) => {
+        if(sg.i in secIdx) cur = secIdx[sg.i];
+        if(curSec!=null && cur!==curSec) return;
+        if(sg.i in secIdx){ const n = secIdx[sg.i], sc = meta.sec[n]; h += `<div class="sechead" id="sec-${n}" style="grid-column:1/-1"><div class="t">${tdig(n)}. ${esc(secTitle(sc,n))}</div></div>`; }
+        if(sg.s === 'H' || sg.i.split(':')[1].startsWith('0.')) return;
+        const c = cls(sg), sp = span[k], th = sp ? X.slice(sp[0], sp[1]).trim() : '';
+        if(sp) h += headRows(sp[0]);
+        h += `<div class="pr-row ${c === 'B' ? 'B' : c === 'O' ? 'O' : 'N'}" data-k="${k}" id="pt-${esc(sg.i)}"><div class="pl"><span class="sid">${esc(sg.i)}${c !== 'B' && (whoLabel(sg) || [''])[0] ? ' · ' + esc((whoLabel(sg) || [''])[0]) : ''}${trnBadge((state.trnSeg || {})[sg.i])}<button type="button" class="cpseg" data-cp="${esc(sg.i)}" title="คัดลอกรหัสท่อนและข้อความบาลี–ไทย">คัดลอก</button></span><span class="pp">${esc(sg.p)}</span>${sg.e ? `<span class="pe">${esc(sg.e)}</span>` : '<span class="pe ne">ไม่มีคำแปลอังกฤษ</span>'}</div><div class="tl" lang="th"${th ? ` data-o="${sp[0] + (X.slice(sp[0], sp[1]).match(/^\s*/)[0].length)}"` : ''}>${th ? thaiChunk(th, false) : '<span class="mg">〃</span>'}</div></div>`;
+      });
+      body.innerHTML = h + '</div>' + (curSec!=null ? navHTML() : ''); bindNav();
+      if(nTrn) markTrn(body, id, meta.th[1][0]);
+      const fk = focusTh || focusSeg; if(fk){ const el = document.getElementById('pt-' + fk); if(el){ el.classList.add('focusp'); el.scrollIntoView({block:'center'}); } }
+      return;
+    }
+    if(state.tab==='th'){
+      if(!thUnits.length){ body.innerHTML = '<p>ยังไม่มีข้อความไทยของสูตรนี้</p>'; return; }
+      let h = note ? `<div class="warnbox">${note}</div>` : '';
+      if(shared) h += `<div class="warnbox" style="border-left-color:var(--line);background:var(--bg)">${shared}</div>`;
+      if(anySpk) h += `<div class="spkbar"><label><input type="checkbox" id="spkt"${state.showSpk?' checked':''}> แยกผู้พูดในข้อความไทย</label>
+        <span class="k">สีปกติ <i>= พระผู้มีพระภาค</i></span><span class="k kO">สีน้ำเงิน = ผู้อื่น</span><span class="k kN">สีเทา = ผู้รวบรวม / หัวข้อ</span>${uSpans.some(sp => sp && sp.some(x => x[2]==='U')) ? '<span class="k kU">สีม่วง = ไม่ระบุผู้กล่าวในตัวบท (ไม่ใช่ระดับ A)</span>' : ''}<span class="k kQ">ขีดเส้นประ = ยังไม่ระบุ</span>
+        <span>ส่งต่อจากป้ายบาลีรายท่อนโดยอัตโนมัติ (รวมการจับคู่ระดับท่อนกับตัวบอกในไทย เช่น พ. ข้าแต่ ทูลว่า) ยังมีที่คลาดได้ ต้องอ่านบริบทเองก่อนจัดระดับ</span></div>`;
+      if(hasPar) h += `<div class="spkbar"><label><input type="checkbox" id="parm"${state.parMode!==false?' checked':''}> แบ่งย่อหน้าตามบาลี</label><span>แต่ละก้อนตรงกับย่อหน้าหนึ่งของบาลี (จับคู่อัตโนมัติ Phase 3A) · คลิกรหัสย่อหน้าเพื่อดูบาลีของย่อหน้านั้น · ปิดเพื่อกลับไปแบ่งตามข้อของฉบับหลวง</span></div>`;
+      h += `<div class="thai${anySpk && !state.showSpk ? ' nospk' : ''}" lang="th">`;
+      if(hasPar && state.parMode!==false){
+        const X = thUnits[0].x, segs = (await loadGroup(meta.g))[id] || [];
+        const pts = [...alnPts].sort((a, b) => a[0] - b[0]);
+        const secAt0 = {}; (meta.sec||[]).forEach((sc,n) => { const k = segs.findIndex(x => x.i === sc.i); if(k >= 0) secAt0[k] = n; });
+        const pk = sid => { const b = sid.split(':')[1]; const i = b.lastIndexOf('.'); return i < 0 ? b : b.slice(0, i); };
+        // ย่อหน้าบาลี → ช่วงไทย (ต้นของท่อนแรกที่มีไทยของตัวเอง ถึงต้นย่อหน้าถัดไป) · หัวข้อผู้แปลแยกเป็นก้อนของตัวเอง
+        const items = [];
+        pts.forEach((pt, i) => { const e = i + 1 < pts.length ? pts[i + 1][0] : X.length;
+          if(pt[1] < 0){
+            const he = pt[2] && pt[2] < e ? pt[2] : e; items.push({h:true, a:pt[0], b:he});
+            // ข้อความหลังหัวข้อที่ยังเป็นของท่อนก่อนหน้า
+            const pv = [...items].reverse().find(x => !x.h);
+            if(he < e && pv && X.slice(he, e).trim()) items.push({key:pv.key, keys:[pv.key], a:he, b:e, k:pv.k, sid:pv.sid, cont:true});
+            return; }
+          const sg = segs[pt[1]]; if(!sg) return; const key = pk(sg.i), last = items[items.length - 1];
+          if(last && !last.h && last.key === key) last.b = e; else items.push({key, keys:[key], a:pt[0], b:e, k:pt[1], sid:sg.i}); });
+        // รวมย่อหน้าสั้นที่ติดกัน (เช่น ชุด "ย่อมสำคัญธาตุดิน…" ทีละธาตุ) เป็นก้อนเดียว ไม่ข้ามตอน
+        const SHORT = 110, CAP = 900;
+        for(let i = items.length - 1; i > 0; i--){
+          const x = items[i], y = items[i - 1];
+          if(x.h || y.h || x.cont || y.cont) continue;
+          const lx = X.slice(x.a, x.b).trim().length, ly = X.slice(y.a, y.b).trim().length;
+          if(lx < SHORT && (ly < SHORT || y.grp) && (y.b - y.a) + (x.b - x.a) < CAP && !(x.k in secAt0)){ y.b = x.b; y.keys = y.keys.concat(x.keys); y.grp = true; items.splice(i, 1); }
+        }
+        const secAt = secAt0;
+        const secKs = Object.keys(secAt).map(Number).sort((a,b)=>a-b);
+        const secOf = k => { let n = 0; for(const sk of secKs){ if(sk <= k) n = secAt[sk]; else break; } return n; };
+        if(curSec!=null) h += navHTML();
+        let shown = new Set(), lastSec = null;
+        items.forEach(it => {
+          const n = it.h ? lastSec : secOf(it.k);
+          if(curSec!=null && n!==curSec) return;
+          if(!it.h && meta.sec && meta.sec.length > 1 && n !== lastSec && !shown.has(n)){ shown.add(n); const sc = meta.sec[n]; h += `<div class="sechead" id="sec-${n}"><div class="t">${tdig(n)}. ${esc(secTitle(sc,n))}</div><div class="m">${secMeta(sc)}</div></div>`; }
+          if(!it.h) lastSec = n;
+          const raw = X.slice(it.a, it.b), lead = raw.match(/^\n*/)[0].length, txt = raw.replace(/^\n+|\n+$/g, '');
+          if(!txt.trim()) return;
+          if(it.h){ h += `<div class="pblk hd"><span class="pid">หัวข้อที่ผู้แปลเติม · ไม่มีในบาลี</span>${thaiHTML(txt, term, null, it.a + lead)}</div>`; return; }
+          const lab = it.keys.length > 1 ? `${id}:${it.keys[0]}–${it.keys[it.keys.length - 1]}` : `${id}:${it.key}`;
+          h += `<div class="pblk" data-pk="${esc(it.keys.join(' '))}" data-k="${it.k}"><button type="button" class="pid" data-sid="${esc(it.sid)}" title="ดูบาลีของย่อหน้านี้">${esc(lab)}${it.keys.length > 1 ? ` <span style="font-family:var(--f-thai)">(รวม ${tdig(it.keys.length)} ย่อหน้าสั้น)</span>` : ''}</button>${thaiHTML(txt, term, spans, it.a + lead)}<div class="ppv" hidden></div></div>`;
+        });
+        if(curSec!=null) h += navHTML();
+      } else if(meta.sec && meta.sec.length > 1 && thUnits.length === 1){
+        const X = thUnits[0].x, secs = meta.sec;
+        if(curSec!=null) h += navHTML();
+        secs.forEach((sc, n) => {
+          if(curSec!=null && n!==curSec) return;
+          const end = n+1 < secs.length ? secs[n+1].c : X.length;
+          if(end <= sc.c && n+1 < secs.length) { h += `<div class="sechead" id="sec-${n}"><div class="t">${tdig(n)}. ${esc(secTitle(sc,n))}</div><div class="m">${secMeta(sc)} · เริ่มในย่อหน้าเดียวกับตอนถัดไป</div></div>`; return; }
+          h += `<div class="sechead" id="sec-${n}"><div class="t">${tdig(n)}. ${esc(secTitle(sc,n))}</div><div class="m">${secMeta(sc)}</div></div>`;
+          const raw = X.slice(sc.c, end), lead = raw.match(/^\n*/)[0].length;
+          h += thaiHTML(raw.replace(/^\n+|\n+$/g,''), term, spans, sc.c + lead);
+        });
+        if(curSec!=null) h += navHTML();
+      } else {
+        thUnits.forEach((u,ix) => { h += `<div class="thu" data-u="${meta.th[1][ix]}">`; if(thUnits.length>1 || ix>0) h += `<h3>${esc(u.t||'(ไม่มีชื่อในฉบับหลวง)')}</h3>`; h += thaiHTML(u.x, term, uSpans[ix] || null, 0) + '</div>'; });
+      }
+      body.innerHTML = h + '</div>'; bindNav();
+      if(nTrn && markTrn(body, id, meta.th[1][0])){ const tb = document.createElement('div'); tb.className = 'spkbar trnbar'; tb.innerHTML = `<span class="k"><span class="trn mid demo">ขีดเส้นใต้สีส้ม</span><sup class="trn-i mid demo">※</sup> = มีหมายเหตุคำแปล (คำแปลคลาด คำเติม หรือพิมพ์ผิด) กดที่ข้อความเพื่อดูบาลีและคำที่ควรเป็น</span><span class="k"><span class="gloss">(คำในวงเล็บ)</span> สีจาง = คำของผู้แปล ไม่มีในบาลี</span>`; const th0 = body.querySelector('.thai'); if(th0) th0.before(tb); }
+      const pm = $('#parm'); if(pm) pm.addEventListener('change', () => { state.parMode = pm.checked; try{localStorage.setItem('bv-par', pm.checked?'1':'0')}catch(e){}; renderTab().then(applyBFilter); });
+      body.querySelectorAll('.pblk .pid[data-sid]').forEach(bt => bt.addEventListener('click', async () => {
+        const blk = bt.closest('.pblk'), pv = blk.querySelector('.ppv');
+        if(!pv.hidden){ pv.hidden = true; return; }
+        const segs = (await loadGroup(meta.g))[id] || [], keys = new Set(blk.dataset.pk.split(' '));
+        const pk = sid => { const b = sid.split(':')[1]; const i = b.lastIndexOf('.'); return i < 0 ? b : b.slice(0, i); };
+        pv.innerHTML = segs.filter(x => x.s !== 'H' && keys.has(pk(x.i))).map(x => `<div class="s ${cls(x)==='B'?'B':cls(x)==='O'?'O':''}"><span class="w">${esc(x.i)}</span> <span class="p">${esc(x.p)}</span>${x.e?`<span class="e">${esc(x.e)}</span>`:''}</div>`).join('') + `<a href="#${toHash(id)}@${esc(bt.dataset.sid)}" class="go">เปิดในแท็บบาลี ↗</a>`;
+        pv.hidden = false;
+      }));
+      const st = $('#spkt'); if(st) st.addEventListener('change', () => { state.showSpk = st.checked; try{localStorage.setItem('bv-spk', st.checked?'1':'0')}catch(e){}; body.querySelector('.thai').classList.toggle('nospk', !st.checked); });
+      if(term){ const m = body.querySelector('mark'); if(m) m.scrollIntoView({block:'center'}); }
+      if(focusTh){
+        const pts = thUnits.length === 1 ? (((await loadAln(meta.th[0])) || {})[meta.th[1][0]] || null) : null;
+        let msg = '';
+        if(pts && pts.length){
+          const segs = (await loadGroup(meta.g))[id] || [];
+          const k = segs.findIndex(x => x.i === focusTh);
+          let off = pts[0][0];
+          for(const pt of pts){ if(pt[1] < 0) continue; if(pt[1] <= k) off = pt[0]; else break; }  // ชิ้นไทยสุดท้ายที่เริ่มก่อนหรือที่ท่อนนี้
+          let best = null;
+          if(hasPar && state.parMode!==false){ const pkf = focusTh.split(':')[1].replace(/\.[^.]*$/, ''); best = body.querySelector(`.pblk[data-pk~="${CSS.escape(pkf)}"]`); }
+          if(!best) body.querySelectorAll('.thai p[data-o]').forEach(pe => { if(+pe.dataset.o <= off) best = pe; });
+          if(best){ best.classList.add('focusp'); best.scrollIntoView({block:'center'}); }
+          msg = `ย่อหน้าที่เน้นตรงกับท่อนบาลี ${focusTh} (จับคู่อัตโนมัติ อาจคลาด ±๑ ย่อหน้า)`;
+        } else if(meta.subu && meta.subu[focusTh.split(':')[0]]){  // ช่วงสูตรสั้น AN 1–2: ข้อฉบับหลวงของสูตรย่อยนั้น
+          const us = meta.subu[focusTh.split(':')[0]]; let first = null;
+          us.forEach(u => { const el = body.querySelector(`.thu[data-u="${u}"]`); if(el){ el.classList.add('focusp'); first = first || el; } });
+          if(first) first.scrollIntoView({block:'center'});
+          msg = `ข้อฉบับหลวงที่เน้นตรงกับสูตร ${focusTh.split(':')[0]} (จับคู่รายสูตรย่อย)`;
+        } else msg = `ยังไม่มีการจับคู่รายย่อหน้าสำหรับสูตรนี้ จึงเปิด${curSec!=null?'ตอนที่มีท่อนบาลี':'ทั้งสูตร'} ${focusTh} · ดูท่อนนั้นแบบตรงตัวได้ในแท็บบาลี`;
+        const nb = document.createElement('div'); nb.className = 'focusnote'; nb.textContent = msg; body.prepend(nb);
+      }
+    } else {
+      body.innerHTML = 'กำลังโหลดบาลี…';
+      const segs = (await loadGroup(meta.g))[id];
+      const secIdx = {}; (meta.sec||[]).forEach((sc,n) => secIdx[sc.i] = n);
+      let h = curSec!=null ? navHTML() : ''; let prev = null; let cur = 0;
+      segs.forEach(sg => {
+        if(sg.i in secIdx) cur = secIdx[sg.i];
+        if(curSec!=null && cur!==curSec) return;
+        if(sg.i in secIdx){ const n = secIdx[sg.i], sc = meta.sec[n]; h += `<div class="sechead" id="sec-${n}"><div class="t">${tdig(n)}. ${esc(secTitle(sc,n))}</div><div class="m">${secMeta(sc)}</div></div>`; if(sg.s==='H') return; }
+        h += segHTML(sg, prev); if(sg.s!=='H') prev = sg;
+      });
+      if(curSec!=null) h += navHTML();
+      body.innerHTML = h; bindNav();
+      if(focusSeg){ const el = body.querySelector(`.seg[data-id="${CSS.escape(focusSeg)}"]`); if(el){ el.scrollIntoView({block:'center'}); el.style.outline='2px solid var(--accent)'; } }
+    }
+  };
+  $('#main').querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => { state.tab = b.dataset.t; try{localStorage.setItem('bv-tab', state.tab)}catch(e){}; focusSeg = null; renderTab().then(applyBFilter); }));
+  $('#main').querySelectorAll('.sectoc a').forEach(a => a.addEventListener('click', e => { e.preventDefault();
+    if(curSec!=null){ curSec = +a.dataset.sec; term = null; renderTab().then(() => $('#tabbody').scrollIntoView({block:'start'})); return; }
+    const el = document.getElementById('sec-'+a.dataset.sec); if(el) el.scrollIntoView({block:'start'}); }));
+  await renderTab(); applyBFilter();
+  if(!focusSeg && !term) window.scrollTo({top: $('.grid').offsetTop - 10});
+}
+
+async function search(){
+  const raw = $('#q').value.trim(); if(!raw) return;
+  const lang = $('#lang').value, who = $('#who').value;
+  $('#main').innerHTML = '';
+  if(lang==='th') return searchThai(raw, who);
+  await loadAll('pe');
+  const terms = raw.split(/\s+/).filter(Boolean), ft = terms.map(fold);
+  const results = []; let segCount = 0;
+  for(const meta of state.index){
+    const segs = state.groups[meta.g][meta.id]; const hits = [];
+    segs.forEach(sg => {
+      if(sg.s==='H') return;
+      if(who==='A' && sg.l!=='A') return;
+      if(who==='AU' && !(sg.l==='A' || sg.s===UNATTR)) return;
+      if(who==='AB' && !(sg.l==='A'||sg.l==='B?')) return;
+      const hay = lang==='p' ? fold(sg.p) : fold(sg.e);
+      if(ft.every(t => hay.includes(t))) hits.push(sg);
+    });
+    if(hits.length){ results.push([meta, hits]); segCount += hits.length; }
+  }
+  $('#status').textContent = results.length ? `พบ ${segCount} ท่อน ใน ${results.length} สูตร` : 'ไม่พบ ลองใช้รากศัพท์สั้นลง หรือเปลี่ยนตัวกรองผู้พูด';
+  let html = '<div class="res">';
+  results.slice(0,120).forEach(([meta, hits]) => {
+    html += `<section class="card rs"><h3><a href="#${toHash(meta.id)}">${label(meta.id)} · ${esc(meta.tt||meta.tp)}</a></h3><div class="where">${esc(meta.tp)} · ${esc(meta.te)}</div>`;
+    let prev=null; hits.slice(0,5).forEach(sg => { html += segHTML(sg, prev, terms); prev = sg; });
+    if(hits.length>5) html += `<div class="segid">อีก ${hits.length-5} ท่อน</div>`;
+    html += '</section>';
+  });
+  if(results.length>120) html += `<div class="status">แสดง ๑๒๐ สูตรแรกจาก ${results.length} สูตร</div>`;
+  state.lastSearch = {html: html + '</div>', status: $('#status').textContent, kind: 'pe', raw, y: 0};
+  restoreSearch(true);
+}
+function bindResults(){
+  const ls = state.lastSearch;
+  if(ls.kind==='pe'){
+    $('#main').querySelectorAll('.rs .seg').forEach(el => el.addEventListener('click', () => {
+      const sid = el.dataset.id.split(':')[0]; ls.y = window.scrollY; state.fromSearch = true; pendingFocus = el.dataset.id;
+      const m = state.byId[sid];
+      if(m && m.sec && m.sec.length>1){ const segs = state.groups[m.g][sid]; const pos = segs.findIndex(x => x.i===el.dataset.id); let n = 0; m.sec.forEach((sc,i) => { const si = segs.findIndex(x => x.i===sc.i); if(si>=0 && si<=pos) n = i; }); pendingSec = n; }
+      go(sid);
+    }));
+    $('#main').querySelectorAll('.rs h3 a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); ls.y = window.scrollY; state.fromSearch = true; go(fromHash(a.getAttribute('href').slice(1))); }));
+  } else {
+    $('#main').querySelectorAll('.rs h3 a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); ls.y = window.scrollY; state.fromSearch = true; pendingTerm = ls.raw; pendingSec = a.dataset.sec!=null ? +a.dataset.sec : null; state.tab='th'; go(fromHash(a.getAttribute('href').slice(1))); }));
+  }
+}
+function restoreSearch(fresh){
+  const ls = state.lastSearch; if(!ls) return home();
+  $('#main').innerHTML = ls.html; $('#status').textContent = ls.status;
+  document.querySelectorAll('.slist a.on').forEach(a=>a.classList.remove('on'));
+  bindResults();
+  if(!fresh) window.scrollTo({top: ls.y});
+}
+
+async function searchThai(raw, who){
+  await loadAll('th'); await loadTrn();
+  const TU = {}; Object.entries(TRN).forEach(([sid, ns]) => ns.forEach(n => (n.at || []).forEach(([u, a, b]) => (TU[n.v + ':' + u] = TU[n.v + ':' + u] || []).push([a, b, n, sid]))));
+  const t = qThai(raw);
+  const out = []; let total = 0, filtered = 0;
+  await Promise.all(SPKVOLS.map(loadSpk));
+  const okCode = c => who==='all' || c==='B' || (who==='AB' && c==='?');
+  for(const v of THVOLS){
+    const arr = state.thai[v];
+    const SP = state.spk[v] || null;
+    if(!state.thaiNorm[v]) state.thaiNorm[v] = arr.map(u => normThai(u.x));
+    arr.forEach((u, i) => {
+      const [n, map] = state.thaiNorm[v][i];
+      let pos = n.indexOf(t); if(pos === -1) return;
+      const sc = u.sc.map(id => state.byId[id]).filter(Boolean);
+      const spans = SP ? SP[i] : null;
+      if(who!=='all' && !spans){ const hasB = sc.some(m => m.b>0 || (who!=='A' && m.u>0)); if(sc.length && !hasB) return; }
+      const metaS = sc.length===1 && sc[0].sec && sc[0].sec.length>1 ? sc[0] : null;
+      const groups = new Map();
+      while(pos !== -1){
+        const off = map[pos]; const key = metaS ? secOfOffset(metaS, off) : -1;
+        const code = spans ? spkAt(spans, off) : null;
+        if(spans && !okCode(code)){ filtered++; pos = n.indexOf(t, pos+t.length); continue; }
+        if(!groups.has(key)) groups.set(key, {first: pos, cnt: 0, code}); groups.get(key).cnt++;
+        pos = n.indexOf(t, pos+t.length);
+      }
+      groups.forEach((g, key) => {
+        total += g.cnt;
+        const a = map[g.first], b = map[g.first+t.length-1]+1;
+        const s0 = Math.max(0, a-90), s1 = Math.min(u.x.length, b+110);
+        const snip = (s0>0?'…':'') + esc(u.x.slice(s0,a)) + '<mark>' + esc(u.x.slice(a,b)) + '</mark>' + esc(u.x.slice(b,s1)) + (s1<u.x.length?'…':'');
+        const tn = (TU[v + ':' + i] || []).filter(x => x[1] > s0 && x[0] < s1), hitN = tn.some(x => x[1] > a && x[0] < b);
+        out.push({v, u, sc, cnt: g.cnt, snip, tn, hitN, code: g.code, sec: key>=0 ? key : null, secT: key>=0 ? secTitle(metaS.sec[key], key) : null});
+      });
+    });
+  }
+  $('#status').textContent = out.length ? `พบ ${tdig(total)} แห่ง ใน ${tdig(out.length)} ตอน${who==='A'?' (เฉพาะสูตรที่มีพระดำรัส)':who==='AU'?' (สูตรที่มีพระดำรัส หรือคาถาที่ไม่ระบุผู้กล่าว)':''}${filtered?` · มัชฌิมนิกายกรองรายประโยค: ตัดออก ${tdig(filtered)} แห่งที่ไม่ใช่พระดำรัส${who==='AB'?'':' (รวมที่ยังไม่ระบุ)'}`:''}` : 'ไม่พบ ลองพิมพ์คำให้สั้นลง หรือสะกดอีกแบบ (ฉบับหลวงใช้ตัวสะกดเก่าบางคำ เช่น ทิฐิ)';
+  let html = '<div class="res">';
+  out.slice(0,150).forEach(r => {
+    const id = r.sc[0] ? r.sc[0].id : null;
+    const where = `ฉบับหลวง เล่ม ${tdig(r.v)}${r.u.pg?` หน้า ${tdig(r.u.pg[0])}`:''}${r.u.k?` ข้อ ${tdig(r.u.k[0])}${r.u.k[1]!==r.u.k[0]?'–'+tdig(r.u.k[1]):''}`:''}`;
+    const pct = r.sc[0] && r.sc[0].n ? Math.round(100*r.sc[0].b/r.sc[0].n) : null;
+    html += `<section class="card rs"><h3>${id?`<a href="#${toHash(id)}" data-term="1"${r.sec!=null?` data-sec="${r.sec}"`:''}>${esc(r.u.t||'(ไม่มีชื่อ)')}${r.secT?` · ตอน ${esc(r.secT)}`:''}</a>`:esc(r.u.t||'(ไม่มีชื่อ)')}</h3>
+      <div class="where">${where}${id?` · ${label(id)}`:''}${r.sec!=null?` · ตอนที่ ${tdig(r.sec)}`:''}${pct!==null&&r.sec==null?` · พระดำรัส ${pct}%`:''}${r.sec!=null&&r.sc[0].sec?` · ตอนนี้พระดำรัส ${r.sc[0].sec[r.sec].b}%`:''}${r.cnt>1?` · พบ ${tdig(r.cnt)} แห่งในตอนนี้`:''}${r.code?` · <span class="spk">ผู้พูด: ${SPKNAME[r.code]}</span>`:''}</div>
+      <p class="snip">${r.snip}</p>${r.tn && r.tn.length ? `<div class="trnflag ${r.tn.some(x => x[2].sev === 'high') ? 'high' : 'mid'}">※ ${r.hitN ? 'คำที่ค้นอยู่ในจุดที่มีหมายเหตุคำแปล' : 'ข้อความนี้มีหมายเหตุคำแปล'}: ${[...new Map(r.tn.map(x => [x[2].id, x])).values()].slice(0, 3).map(x => `<button type="button" data-trn="${esc(x[2].id)}" data-trs="${esc(x[3])}">“${esc(x[2].th)}” · ${esc(TRNS[x[2].sev] || '')}</button>`).join(' ')}</div>` : ''}</section>`;
+  });
+  if(out.length>150) html += `<div class="status">แสดง ๑๕๐ ตอนแรก เพิ่มคำค้นให้เจาะจงขึ้น</div>`;
+  state.lastSearch = {html: html + '</div>', status: $('#status').textContent, kind: 'th', raw, y: 0};
+  restoreSearch(true);
+}
+
+function go(id){ const h = '#'+toHash(id); if(location.hash === h) route(); else location.hash = h; }
+
+function home(){
+  $('#main').innerHTML = `<div class="card empty">
+    <h2>อ่านและค้นพุทธพจน์ในทีฆนิกาย มัชฌิมนิกาย สังยุตตนิกาย และอังคุตตรนิกาย</h2>
+    <p>เลือกหมวดจากสารบัญ หรือค้นด้วยคำไทยจากฉบับหลวง ค้นได้โดยไม่ต้องสนใจช่องว่าง แต่ละสูตรมีแท็บบาลี–อังกฤษสำหรับตรวจว่าใครเป็นผู้กล่าว</p>
+    <div class="chips">
+      <button type="button" data-q="จิตบ้าง มโนบ้าง">จิตบ้าง มโนบ้าง</button>
+      <button type="button" data-q="ปรินิพพานในระหว่าง">ปรินิพพานในระหว่าง</button>
+      <button type="button" data-q="สัทธานุสารี">สัทธานุสารี</button>
+      <button type="button" data-q="สัมมัตตนิยาม">สัมมัตตนิยาม</button>
+      <button type="button" data-q="อนุสัย">อนุสัย</button>
     </div>
-  </section>
+    <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><a href="#snote" class="pill b" style="text-decoration:none;font-size:.92rem;padding:5px 12px">Short note: ทานในพุทธพจน์ (ฉบับ ๓) · ๙ ส่วน ๕๗ พระสูตร →</a><a href="#trn" class="pill trnp" style="text-decoration:none;font-size:.92rem;padding:5px 12px">หมายเหตุคำแปลฉบับหลวง →</a></p>
+    <details class="help"><summary>ข้อมูลนี้มาจากไหน และเชื่อได้แค่ไหน</summary><ul>
+      <li>ภาษาไทย: พระไตรปิฎกฉบับหลวง เล่ม ๙–๑๑ (ทีฆนิกาย) ๑๒–๑๔ (มัชฌิมนิกาย) ๑๕–๑๙ (สังยุตตนิกาย) และ ๒๐–๒๔ (อังคุตตรนิกาย) แปลงจาก PDF แก้การเข้ารหัสฟอนต์และวรรณยุกต์เคลื่อนแล้ว อาจยังเหลือคำเพี้ยนเล็กน้อย</li>
+      <li>บาลี: ฉบับ Mahāsaṅgīti และคำแปลอังกฤษของ Bhikkhu Sujato จาก SuttaCentral (CC0) ใช้เป็นตัวบทตัดสินและใช้ระบุผู้พูด</li>
+      <li>คำในวงเล็บ [ ] และ ( ) สีจาง คือคำเสริมของผู้แปลฉบับหลวง ไม่มีในบาลี ไม่ใช้เป็นหลักฐาน · ข้อความที่ขีดเส้นใต้สีส้มหรือแดงมีหมายเหตุคำแปล กดเพื่อดูบาลีและคำที่ควรเป็น</li>
+      <li>ไทยกับบาลีจับคู่กันทีละพระสูตร ส่วนใหญ่ตามชื่อสูตร สูตรที่มีจุดสีส้มในสารบัญคือจับคู่ไม่แน่ชัด</li>
+      <li>สีผู้พูดเดาอัตโนมัติจากบาลี B? = มีสัญญาณการรับรอง (เช่น "สาธุ สาธุ") ต้องอ่านบริบทก่อนจัดเป็น Level B ส่วน Level C ไม่ได้ติดป้าย</li>
+    </ul></details></div>`;
+  $('#main').querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { $('#q').value=b.dataset.q; $('#lang').value='th'; $('#who').value='all'; search(); }));
+}
 
-  <!-- Main Workspace -->
-  <main class="workspace">
-    <!-- Left Column: Interactive Circuit Diagram (แผนภาพวงจร) -->
-    <aside class="diagram-panel">
-      <div class="panel-header">
-        <div>
-          <h2 class="panel-title" id="diagramTitle">แผนภาพวงจรธรรม</h2>
-          <p class="panel-desc" id="diagramSubtitle">คลิกที่โหนดบนวงจรเพื่อดูพุทธพจน์และคำเชื่อมโยงเฉพาะจุด</p>
-        </div>
-        <div class="diagram-mode-switch" id="cycleDirectionGroup">
-          <button class="mode-btn active" data-direction="samudaya">สายเกิด</button>
-          <button class="mode-btn" data-direction="nirodha">สายดับ</button>
-        </div>
+async function routeSeg(base, seg, th){
+  const id = fromHash(base), meta = state.byId[id];
+  if(!meta){ showSutta(id); return; }
+  let n = null;
+  if(meta.sec && meta.sec.length > 1){
+    const segs = (await loadGroup(meta.g))[id] || []; const pos = segs.findIndex(x => x.i === seg);
+    if(pos >= 0){ n = 0; meta.sec.forEach((sc,i) => { const si = segs.findIndex(x => x.i === sc.i); if(si >= 0 && si <= pos) n = i; }); }
+  }
+  showSutta(id, th ? null : seg, null, false, n, th ? seg : null);
+}
+// ===== แผนผังธรรม: data/map-<id>.json (ร่างโดยห้องสนทนา ตรวจรหัสท่อนโดยห้องควบคุม) =====
+const nkName = s => ({dn:'ทีฆนิกาย', mn:'มัชฌิมนิกาย', sn:'สังยุตตนิกาย', an:'อังคุตตรนิกาย'})[nkOf(s)] || 'ขุททกนิกาย';
+
+function setView(v){
+  const full = v === 'note' || v === 'trn';
+  document.querySelector('.grid').hidden = full;
+  $('#sf').hidden = full; $('#status').hidden = full;
+  $('#noteview').hidden = !full;
+  if(v !== 'note' && typeof closeSutta === 'function') closeSutta();
+  document.querySelectorAll('.topnav a').forEach(a => a.classList.toggle('on', (a.dataset.v||'read') === v));
+  state.view = v;
+}
+
+const nst = {data:null, id:null};
+const LVT = {A:'พระดำรัสโดยตรง', B:'ผู้อื่นกล่าว · ทรงรับรองชัดแจ้ง', BP:'ผู้อื่นกล่าว · ทรงรับรองชัดแจ้ง', C:'คำสาวก · รับรองโดยบริบท', U:'ไม่ระบุผู้กล่าวในตัวบท', R:'ห้องสนทนาเรียบเรียง/เชื่อมเอง ไม่ใช่พระดำรัส'};
+const lvB = lv => lv ? `<span class="lv ${lv}" title="${esc(LVT[lv] || '')}">${({A:'A', B:'B', BP:'B', C:'C', U:'⚪', R:'ห้อง'})[lv] || lv}</span>` : '';
+const segTail = r => { const a = r.seg.split(':')[1], b = r.to && r.to !== r.seg ? r.to.split(':')[1] : ''; return b ? `${a}–${b}` : a; };
+function flashBox(el){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+
+function drawSame(){
+  document.querySelectorAll('#noteview .ld-svg').forEach(svg => {
+    const wrap = svg.parentElement, pairs = JSON.parse(svg.dataset.same || '[]'), W0 = wrap.getBoundingClientRect();
+    let d = '';
+    pairs.forEach(([a, b]) => {
+      const A = wrap.querySelector(`.stp[data-seg="${CSS.escape(a)}"]`), Bq = wrap.querySelector(`.stp[data-seg="${CSS.escape(b)}"]`);
+      if(!A || !Bq) return;
+      const ra = A.getBoundingClientRect(), rb = Bq.getBoundingClientRect();
+      if(Math.abs(ra.left - rb.left) < 40) return; // คอลัมน์ซ้อนกันบนจอแคบ: ใช้ป้าย ⇆ แทนเส้น
+      const [l, r] = ra.left < rb.left ? [ra, rb] : [rb, ra];
+      const x1 = l.right - W0.left, y1 = l.top + l.height / 2 - W0.top, x2 = r.left - W0.left, y2 = r.top + r.height / 2 - W0.top, mx = (x1 + x2) / 2;
+      d += `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
+    });
+    svg.setAttribute('viewBox', `0 0 ${W0.width} ${W0.height}`); svg.innerHTML = d;
+  });
+}
+window.addEventListener('resize', () => { if(state.view === 'note') drawSame(); });
+
+function openSutta(sid, a, z){
+  const S = nst.data.suttas[sid], dr = $('#ndrawer'); if(!dr) return;
+  const meta = state.byId[sid];
+  const key = x => x.split(':')[1].split('.').map(Number), lt = (x, y) => { const X = key(x), Y = key(y); for(let i = 0; i < Math.max(X.length, Y.length); i++){ if((X[i]||0) !== (Y[i]||0)) return (X[i]||0) < (Y[i]||0); } return false; };
+  const hit = p => !!a && !lt(z || a, p.seg) && !lt(p.to || p.seg, a);
+  const hash = (seg, th) => '#' + toHash(sid) + '@' + seg + (th ? '!th' : '');
+  if(!S){ dr.innerHTML = `<button class="x" aria-label="ปิด">×</button><h3>${esc(label(sid))}</h3><p>ยังไม่มีสรุปพระสูตรนี้</p><div class="acts"><a href="${hash(a)}">เปิดบาลี ↗</a></div>`; }
+  else dr.innerHTML = `<button class="x" aria-label="ปิด">×</button>
+    <div class="sid">${esc(label(sid))} · ${esc(nkName(sid))}${meta && meta.tp ? ' · ' + esc(meta.tp) : ''}</div>
+    <h3>${esc(S.th)}</h3><div class="sid">ฉบับหลวง เล่ม/หน้า/ข้อ ${esc(S.loc)}</div>
+    <dl><dt>บริบท</dt><dd>${esc(S.setting || '')}</dd><dt>ผู้ฟัง</dt><dd>${esc(S.audience || '')}</dd></dl>
+    <div class="pt"><span class="by">สรุปโดยห้องสนทนา ไม่ใช่พระดำรัส</span>${esc(S.point)}</div>
+    ${a ? `<div class="hitref">ช่วงที่กล่องนี้อ้าง: <b>${esc(a)}${z && z !== a ? '–' + esc(z.split(':')[1]) : ''}</b> · <a href="${hash(a)}">เปิดบาลีที่ท่อนนี้ ↗</a> · <a href="${hash(a, true)}">ฉบับหลวง ↗</a></div>` : ''}
+    <h4>ตอนต่างๆ ในสูตร</h4>
+    ${(S.parts || []).map((p, k) => `<div class="part ${p.level || 'none'}${hit(p) ? ' hit' : ''}"><div>${lvB(p.level)} ${esc(p.label)} <span class="rid">${esc(p.seg)}${p.to && p.to !== p.seg ? '–' + esc(p.to.split(':')[1]) : ''}</span></div>
+      ${p.level ? '' : '<div class="rid">ผู้อื่นกล่าวหรือคำบรรยาย ไม่ใช่ข้อธรรม</div>'}
+      <div class="acts"><a href="${hash(p.seg)}">บาลี ↗</a><a href="${hash(p.seg, true)}">ฉบับหลวง ↗</a></div>
+      <details data-k="${k}"><summary>ดูบาลีของตอนนี้</summary><div class="pv">กำลังโหลด…</div></details></div>`).join('')}
+    ${S.notes ? `<h4>ข้อควรระวัง</h4><div class="wb">⚠ ${esc(S.notes)}</div>` : ''}`;
+  dr.querySelector('.x').onclick = closeSutta;
+  dr.querySelectorAll('details[data-k]').forEach(d => d.addEventListener('toggle', async () => {
+    if(!d.open || d.dataset.ok) return; d.dataset.ok = 1;
+    const p = S.parts[+d.dataset.k], pv = d.querySelector('.pv');
+    try{
+      const segs = (await loadGroup(meta.g))[sid] || [], i0 = segs.findIndex(x => x.i === p.seg), i1 = segs.findIndex(x => x.i === (p.to || p.seg));
+      const part = segs.slice(i0, i1 + 1), cut = part.length > 10;
+      pv.innerHTML = (cut ? part.slice(0, 10) : part).map(x => `<div class="s ${cls(x) === 'B' ? 'B' : cls(x) === 'O' ? 'O' : ''}"><span class="w">${esc(x.i)} · ${esc((whoLabel(x) || ['ผู้รวบรวม'])[0])}</span><div class="p">${esc(x.p)}</div>${x.e ? `<div class="e">${esc(x.e)}</div>` : ''}</div>`).join('') + (cut ? `<div class="w">… อีก ${tdig(part.length - 10)} ท่อน</div>` : '');
+    }catch(e){ pv.textContent = 'โหลดบาลีไม่สำเร็จ: ' + e.message; }
+  }));
+  dr.classList.add('open'); $('#nscrim').classList.add('open'); dr.scrollTop = 0; dr.focus();
+  const h = dr.querySelector('.part.hit'); if(h) setTimeout(() => h.scrollIntoView({block:'nearest'}), 230);
+}
+function closeSutta(){ const d = $('#ndrawer'); if(d){ d.classList.remove('open'); $('#nscrim').classList.remove('open'); } }
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeSutta(); });
+
+// ===== Short note ฉบับ ๓ (ต้นแบบ): โน้ตใหญ่หน้าเดียว ผู้ให้ → ทาน → ผู้รับ → ผล ↺ ใจผู้ให้ · data/note3-<id>.json =====
+// ===== Short note ฉบับ ๓ (แบบฟอร์มกลาง) : เมนูเลือกเรื่อง + หน้าโน้ต =====
+const NS = {list:null, data:null, id:null, custom:{}, extMap:{}, extList:[], extLoaded:false};
+const N3ICON = {
+  hand:'<path d="M2.5 14.5h3.5l3 2.2h5.2a1.9 1.9 0 0 0 0-3.8h-3.4"/><path d="M6 14.5v6H2.5"/><path d="M11.8 12.9 18 9.6a1.8 1.8 0 0 1 2 2.9l-6 5.6"/><circle cx="15" cy="5" r="2.3"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
+  bowl:'<path d="M3 11.5h18a9 9 0 0 1-18 0Z"/><path d="M8.5 8h7"/><path d="M12 4.5V8"/><path d="M9 20.5h6"/>',
+  person:'<circle cx="12" cy="7" r="3.2"/><path d="M5 20.5c.8-4 3.6-6.2 7-6.2s6.2 2.2 7 6.2"/>',
+  people:'<circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M2.8 19c.6-3.2 2.6-5 5.2-5s4.6 1.8 5.2 5"/><path d="M12.6 15.2c.9-.8 2-1.2 3.4-1.2 2.6 0 4.6 1.8 5.2 5"/>',
+  field:'<path d="M12 21v-8.5"/><path d="M12 12.5C12 8.5 9 6.5 5 6.5c0 4 3 6 7 6Z"/><path d="M12 10.5c0-3 2.2-5 6-5 0 3-2.2 5-6 5Z"/><path d="M3 21h18"/>',
+  wheel:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5"/>',
+  ladder:'<path d="M7 3v18M17 3v18"/><path d="M7 7h10M7 12h10M7 17h10"/>',
+  loop:'<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/>',
+  eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.8"/>',
+  note:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>'
+};
+const NODEIC = {giver:'hand', intent:'heart', gift:'bowl', recipient:'person', sangha:'people', fruit:'field', dhamma:'wheel', beyond:'ladder'};
+const NODECOL = ['--g1', '--g6', '--g5', '--g4', '--g2', '--g7', '--g3', '--accent'];
+const n3ic = (k, s) => `<svg class="n3i" viewBox="0 0 24 24" width="${s || 22}" height="${s || 22}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${N3ICON[k] || N3ICON.note}</svg>`;
+const s3col = id => { const i = NS.data.core.nodes.findIndex(n => n.id === id); return `var(${NODECOL[(i < 0 ? 0 : i) % NODECOL.length]})`; };
+const s3icon = nd => nd.icon || NODEIC[nd.id] || 'note';
+// ป้ายอ้างอิง: กดแล้วเปิดย่อหน้า · ช่วงที่บาลีย่อ (…pe…) มีป้าย "ย่อ" และพาไปข้อฉบับหลวงที่มีความเต็ม
+const rcHTML = refs => (refs || []).filter(r => r.sutta).map(r => `<button type="button" class="rc${r.elided ? ' el' : ''}" data-s="${esc(r.sutta)}" data-a="${esc(r.seg)}" data-z="${esc(r.to || r.seg)}"${r.elided ? ' data-e="1"' : ''}${r.th ? ` data-th="${esc(r.th)}"` : ''}${r.note ? ` data-n="${esc(r.note)}"` : ''} title="${r.elided ? 'บาลีตรงนี้ย่อไว้ (…pe…) กดเพื่อดูย่อหน้าและข้อฉบับหลวงที่มีความเต็ม' : 'กดเพื่ออ่านย่อหน้านี้'}">${esc(label(r.seg.split(':')[0]))}·${esc(segTail(r))}${r.elided ? '<i>ย่อ</i>' : ''}</button>`).join('');
+function bindRefs(root){
+  root.querySelectorAll('.rc[data-s]').forEach(b => b.onclick = ev => { ev.stopPropagation(); openPara(b.dataset.s, b.dataset.a, b.dataset.z, {e:!!b.dataset.e, th:b.dataset.th || '', n:b.dataset.n || ''}); });
+}
+
+// ===== ระบบจัดการ Short Note เพิ่มเติม (วางโค้ด JSON ในหน้าเว็บ + ดึงจาก Gist / URL ภายนอก) =====
+try{ NS.custom = JSON.parse(localStorage.getItem('pk-custom-snotes') || '{}') || {}; }catch(e){ NS.custom = {}; }
+function saveCustomSnotes(){ try{ localStorage.setItem('pk-custom-snotes', JSON.stringify(NS.custom)); }catch(e){ alert('บันทึกในเบราว์เซอร์ไม่สำเร็จ (พื้นที่เต็ม): ' + e.message); } }
+function getSnoteUrls(){ try{ return JSON.parse(localStorage.getItem('pk-snote-urls') || '[]') || []; }catch(e){ return []; } }
+function setSnoteUrls(arr){ try{ localStorage.setItem('pk-snote-urls', JSON.stringify(arr)); }catch(e){} }
+
+// แปลงรหัสท่อน seg -> รหัสไฟล์พระสูตร sutta อัตโนมัติ (ทำงานเหมือน sn3_build.py ฝั่งเบราว์เซอร์)
+function resolveSuttaId(seg){
+  const p = String(seg || '').split(':')[0];
+  if(!p) return null;
+  if(state.byId[p]) return p;
+  const m = p.match(/^([a-z]+)(\d+)(?:\.(\d+))?$/);
+  if(!m) return null;
+  const nk = m[1], n1 = +m[2], n2 = m[3] != null ? +m[3] : null;
+  for(const meta of state.index){
+    if(meta.nk !== nk) continue;
+    if(meta.id === p) return meta.id;
+    const r = meta.id.match(/^([a-z]+)(\d+)(?:\.(\d+))?(?:-(\d+))?$/);
+    if(!r || !r[4]) continue;
+    if(n2 == null && r[3] == null && +r[2] <= n1 && n1 <= +r[4]) return meta.id;
+    if(n2 != null && r[3] != null && +r[2] === n1 && +r[3] <= n2 && n2 <= +r[4]) return meta.id;
+  }
+  return null;
+}
+function prepareSnoteData(raw){
+  if(!raw || typeof raw !== 'object') throw new Error('ข้อมูลไม่ใช่ JSON Object');
+  if(!raw.note || !raw.title) throw new Error('ขาดฟิลด์บังคับ "note" (รหัสเรื่อง) หรือ "title" (ชื่อเรื่อง)');
+  if(!Array.isArray(raw.sections) || !raw.sections.length) throw new Error('ขาดรายการ "sections"');
+  if(!raw.core || !Array.isArray(raw.core.nodes)) throw new Error('ขาดโครงสร้างแผนภาพแกน "core.nodes"');
+  const N = JSON.parse(JSON.stringify(raw));
+  const walk = o => {
+    if(!o || typeof o !== 'object') return;
+    if(Array.isArray(o)){ o.forEach(walk); return; }
+    if(typeof o.seg === 'string' && !o.sutta){
+      const sid = resolveSuttaId(o.seg);
+      if(sid) o.sutta = sid;
+    }
+    Object.entries(o).forEach(([k, v]) => { if(k !== 'suttas') walk(v); });
+  };
+  walk(N);
+  N.suttas = N.suttas || {};
+  Object.values(N.suttas).forEach(S => {
+    (S.parts || []).forEach(p => { if(!p.level && p.lv) p.level = p.lv; });
+  });
+  N.nsuttas = Object.keys(N.suttas).length;
+  return N;
+}
+function snoteMetaOf(N, source, srcUrl){
+  return {
+    id: N.note, title: N.title, pali: N.pali || '', question: N.question || '',
+    updated: N.updated || new Date().toISOString().slice(0, 10),
+    version: N.version || 3, sections: (N.sections || []).length,
+    suttas: Object.keys(N.suttas || {}).length,
+    figures: (N.sections || []).reduce((n, s) => n + (s.figures || []).length, 0),
+    shape: (N.core && N.core.shape) || 'cycle',
+    _src: source, _url: srcUrl || ''
+  };
+}
+async function loadExternalSnotes(force){
+  if(NS.extLoaded && !force) return;
+  NS.extMap = {}; NS.extList = [];
+  const urls = [...getSnoteUrls()];
+  try{
+    const fileLinks = await getJSON('data/snote-links.json');
+    if(Array.isArray(fileLinks)) fileLinks.forEach(u => { const s = typeof u === 'string' ? u : u.url; if(s && !urls.includes(s)) urls.push(s); });
+  }catch(e){}
+  const hq = location.hash.match(/[?&]url=([^&]+)/);
+  if(hq){ const u = decodeURIComponent(hq[1]); if(u && !urls.includes(u)) urls.unshift(u); }
+  await Promise.all(urls.map(async u => {
+    try{
+      const res = await fetch(u, {cache:'no-cache'});
+      if(!res.ok) return;
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : Array.isArray(data.notes) ? data.notes : [data];
+      items.forEach(item => {
+        try{
+          const prep = prepareSnoteData(item);
+          NS.extMap[prep.note] = prep;
+          NS.extList = NS.extList.filter(x => x.id !== prep.note);
+          NS.extList.push(snoteMetaOf(prep, 'url', u));
+        }catch(e){}
+      });
+    }catch(e){}
+  }));
+  NS.extLoaded = true;
+}
+function downloadSnoteJSON(N){
+  const clean = JSON.parse(JSON.stringify(N));
+  delete clean._src; delete clean._url;
+  const blob = new Blob([JSON.stringify(clean, null, 2)], {type:'application/json;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `snote-${clean.note}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function openSnotePasteModal(editId){
+  const existing = editId && NS.custom[editId] ? JSON.stringify(NS.custom[editId], null, 2) : '';
+  const bg = document.createElement('div'); bg.className = 'gmodal-bg';
+  bg.innerHTML = `<div class="gmodal" role="dialog" aria-modal="true" aria-label="วางโค้ด Short Note">
+    <div class="gmodal-hd"><h3>${editId ? 'แก้ไขโค้ด Short Note: ' + esc(editId) : '+ วางโค้ด Short Note (JSON)'}</h3><button type="button" class="x" aria-label="ปิด">×</button></div>
+    <div class="gmodal-bd">
+      <div>วางโค้ด JSON ของ Short Note ฉบับ ๓ ที่ได้จากห้องสนทนา ระบบจะจับคู่รหัสท่อน (<code>seg</code> → พระสูตร) ให้อัตโนมัติและเปิดอ่านได้ทันที</div>
+      <div style="display:flex;gap:8px;align-items:center"><label style="font-size:.82rem;color:var(--muted)">หรือเลือกไฟล์ .json จากเครื่อง: <input type="file" id="gmFile" accept=".json,application/json"></label></div>
+      <textarea id="gmJson" placeholder='วางโค้ด JSON ที่ขึ้นต้นด้วย { "note": "...", "title": "...", ... } ที่นี่'>${esc(existing)}</textarea>
+      <div id="gmMsg"></div>
+    </div>
+    <div class="gmodal-ft">
+      <button type="button" id="gmCancel">ยกเลิก</button>
+      <button type="button" class="prim" id="gmSave">บันทึกและเปิดอ่าน</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  const close = () => bg.remove();
+  bg.querySelector('.x').onclick = close;
+  $('#gmCancel').onclick = close;
+  bg.onclick = e => { if(e.target === bg) close(); };
+  $('#gmFile').onchange = ev => {
+    const f = ev.target.files && ev.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { $('#gmJson').value = String(r.result || ''); };
+    r.readAsText(f, 'utf-8');
+  };
+  $('#gmSave').onclick = () => {
+    const msg = $('#gmMsg');
+    try{
+      const raw = JSON.parse($('#gmJson').value.trim());
+      const prep = prepareSnoteData(raw);
+      NS.custom[prep.note] = prep;
+      saveCustomSnotes();
+      NS.id = null;
+      close();
+      location.hash = '#snote/' + prep.note;
+    }catch(err){
+      msg.innerHTML = `<div class="gerr">ไม่สามารถนำเข้าได้: ${esc(err.message)}</div>`;
+    }
+  };
+}
+function openSnoteUrlModal(){
+  const bg = document.createElement('div'); bg.className = 'gmodal-bg';
+  const renderList = () => {
+    const urls = getSnoteUrls();
+    const box = $('#gmUrlList');
+    if(!box) return;
+    box.innerHTML = urls.length ? urls.map((u, i) => `<div class="gurl-row"><span class="u" title="${esc(u)}">${esc(u)}</span><button type="button" data-del="${i}">ลบ</button></div>`).join('') : '<div style="color:var(--muted);font-size:.84rem">ยังไม่มีลิงก์ภายนอกที่บันทึกไว้</div>';
+    box.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+      const arr = getSnoteUrls(); arr.splice(+b.dataset.del, 1); setSnoteUrls(arr); renderList();
+    });
+  };
+  bg.innerHTML = `<div class="gmodal" role="dialog" aria-modal="true" aria-label="ผูกลิงก์ Short Note ภายนอก">
+    <div class="gmodal-hd"><h3>🔗 ผูกลิงก์ Short Note ภายนอก (GitHub Gist / Raw JSON)</h3><button type="button" class="x" aria-label="ปิด">×</button></div>
+    <div class="gmodal-bd">
+      <div>วางลิงก์ <b>Raw JSON URL</b> (เช่น จาก GitHub Gist หรือไฟล์ <code>.json</code> บนเว็บ) เมื่ออัปเดตเนื้อหาที่ลิงก์ต้นทาง หน้าเว็บนี้จะดึงโน้ตฉบับล่าสุดมาแสดงให้อัตโนมัติ</div>
+      <div style="display:flex;gap:8px"><input type="url" id="gmNewUrl" placeholder="https://gist.githubusercontent.com/.../raw/snote-xxx.json"><button type="button" class="prim" id="gmAddUrl" style="white-space:nowrap;padding:6px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer">เพิ่มลิงก์</button></div>
+      <div id="gmUrlList"></div>
+      <div id="gmUrlMsg"></div>
+    </div>
+    <div class="gmodal-ft">
+      <button type="button" id="gmRefreshUrl">ดึงข้อมูลใหม่เดี๋ยวนี้</button>
+      <button type="button" class="prim" id="gmDoneUrl">เสร็จสิ้น</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  renderList();
+  const close = () => { bg.remove(); NS.id = null; showSnoteMenu(); };
+  bg.querySelector('.x').onclick = close;
+  $('#gmDoneUrl').onclick = close;
+  bg.onclick = e => { if(e.target === bg) close(); };
+  $('#gmAddUrl').onclick = async () => {
+    const inp = $('#gmNewUrl'), u = inp.value.trim(), msg = $('#gmUrlMsg');
+    if(!u) return;
+    msg.innerHTML = 'กำลังทดสอบดึงข้อมูลจากลิงก์…';
+    try{
+      const r = await fetch(u, {cache:'no-cache'});
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      const first = Array.isArray(d) ? d[0] : Array.isArray(d.notes) ? d.notes[0] : d;
+      prepareSnoteData(first);
+      const arr = getSnoteUrls();
+      if(!arr.includes(u)){ arr.push(u); setSnoteUrls(arr); }
+      inp.value = ''; renderList();
+      msg.innerHTML = `<div class="gok">เชื่อมต่อสำเร็จ! พบโน้ต "${esc(first.title)}"</div>`;
+      await loadExternalSnotes(true);
+    }catch(err){
+      msg.innerHTML = `<div class="gerr">ดึงข้อมูลไม่สำเร็จ: ${esc(err.message)} (ตรวจสอบว่าใช้ลิงก์ Raw JSON และเปิดสาธารณะ)</div>`;
+    }
+  };
+  $('#gmRefreshUrl').onclick = async () => {
+    $('#gmUrlMsg').innerHTML = 'กำลังอัปเดต…';
+    await loadExternalSnotes(true);
+    $('#gmUrlMsg').innerHTML = `<div class="gok">อัปเดตเรียบร้อย (พบโน้ตภายนอก ${tdig(NS.extList.length)} เรื่อง)</div>`;
+  };
+}
+
+async function showSnoteMenu(){
+  setView('note'); state.noteId = 'snote';
+  const nv = $('#noteview');
+  nv.innerHTML = '<div class="card">กำลังโหลดรายการ short note…</div>';
+  if(!NS.list){
+    try{ NS.list = await getJSON('data/snotes.json'); }catch(e){ NS.list = []; }
+  }
+  await loadExternalSnotes(false);
+  const merged = new Map();
+  (NS.list || []).forEach(n => merged.set(n.id, {...n, _src:'repo'}));
+  (NS.extList || []).forEach(n => merged.set(n.id, n));
+  Object.values(NS.custom || {}).forEach(N => merged.set(N.note, snoteMetaOf(N, 'custom')));
+  const allNotes = [...merged.values()];
+
+  nv.innerHTML = `<div class="s3menu"><h2>Short note</h2>
+    <p class="s3sub">โน้ตสรุปพุทธพจน์ทีละเรื่อง ห้องสนทนาค้นทุกนิกายในขอบเขต แล้วเรียงร้อยพระสูตรเป็นเรื่องเดียว ทุกประโยคมีป้ายรหัสท่อน กดแล้วอ่านย่อหน้าพระสูตรนั้นได้ทันที เลือกเรื่องที่จะอ่าน</p>
+    <div class="s3bar">
+      <button type="button" class="prim" id="btnPasteNote">+ วางโค้ด Short Note (JSON)</button>
+      <button type="button" id="btnUrlNote">🔗 ผูกลิงก์โน้ตภายนอก (Gist / JSON)</button>
+    </div>
+    <div class="s3cards">${allNotes.map(n => {
+      const isCustom = n._src === 'custom', isUrl = n._src === 'url';
+      const foot = isCustom
+        ? `<div class="s3cacts"><span class="src-tag">● บันทึกในเบราว์เซอร์นี้</span><button type="button" data-exp="${esc(n.id)}">ส่งออก .json</button><button type="button" data-edt="${esc(n.id)}">แก้ไข</button><button type="button" class="del" data-del="${esc(n.id)}">ลบ</button></div>`
+        : isUrl
+        ? `<div class="s3cacts"><span class="src-tag">🔗 ดึงจากลิงก์ภายนอก</span><button type="button" data-exp="${esc(n.id)}">ส่งออก .json</button></div>`
+        : '';
+      return `<div class="s3card-wrap"><a class="s3card" href="#snote/${esc(n.id)}"><span class="ic">${n3ic(n.icon || (n.id === 'dana' ? 'hand' : 'note'), 30)}</span>
+        <span class="t">${esc(n.title)}<small>${esc(n.pali || '')}</small></span><span class="q">${esc(n.question || '')}</span>
+        <span class="m">${tdig(n.sections)} ส่วน · ${tdig(n.figures)} รูปประกอบ · ${tdig(n.suttas)} พระสูตร · ฉบับ ${tdig(n.version || 1)} · ${esc(n.updated || '')}</span><span class="go">อ่าน →</span></a>${foot}</div>`;
+    }).join('')}
+      <div class="s3card soon" style="cursor:pointer" id="cardAddSoon"><span class="ic">${n3ic('note', 30)}</span><span class="t">+ เพิ่มเรื่องใหม่จากห้องสนทนา</span><span class="q">คัดลอกโค้ด JSON Short Note เรื่องใหม่จากแชต แล้วกดปุ่ม "วางโค้ด Short Note" ด้านบนเพื่อเปิดอ่านและจับคู่พระสูตรได้ทันที</span></div></div></div>`;
+
+  $('#btnPasteNote').onclick = () => openSnotePasteModal();
+  $('#cardAddSoon').onclick = () => openSnotePasteModal();
+  $('#btnUrlNote').onclick = () => openSnoteUrlModal();
+  nv.querySelectorAll('[data-exp]').forEach(b => b.onclick = () => {
+    const id = b.dataset.exp, d = NS.custom[id] || NS.extMap[id];
+    if(d) downloadSnoteJSON(d);
+  });
+  nv.querySelectorAll('[data-edt]').forEach(b => b.onclick = () => openSnotePasteModal(b.dataset.edt));
+  nv.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    const id = b.dataset.del;
+    if(confirm(`ลบ Short Note "${id}" ออกจากเบราว์เซอร์นี้ใช่ไหม?`)){
+      delete NS.custom[id]; saveCustomSnotes(); showSnoteMenu();
+    }
+  });
+  window.scrollTo(0, 0);
+}
+
+async function showSnote(id){
+  setView('note'); state.noteId = 'snote/' + id;
+  const nv = $('#noteview');
+  if(NS.id !== id){
+    nv.innerHTML = '<div class="card">กำลังโหลด short note…</div>';
+    await loadExternalSnotes(false);
+    if(NS.custom[id]){
+      NS.data = prepareSnoteData(NS.custom[id]); NS.data._src = 'custom'; NS.id = id;
+    } else if(NS.extMap[id]){
+      NS.data = NS.extMap[id]; NS.data._src = 'url'; NS.id = id;
+    } else {
+      try{ NS.data = await getJSON('data/snote-' + id + '.json'); NS.data._src = 'repo'; NS.id = id; }
+      catch(e){ nv.innerHTML = `<div class="card">ไม่พบ short note เรื่องนี้ (${esc(e.message)}) · <a href="#snote">กลับไปเลือกเรื่อง</a></div>`; return; }
+    }
+  }
+  nst.data = NS.data; nst.id = id;  // ให้แผงสรุปพระสูตร (openSutta) ใช้ได้
+  renderSnote();
+}
+
+function s3sent(s, figOf){
+  const cl = ['s3s', s.lv === 'R' ? 'R' : '', s.mark ? 'mk-' + s.mark : '', s.lv == null ? 'ot' : ''].join(' ');
+  const pre = ({warn:'⚠ ', contrast:'⇄ ', gap:'? '})[s.mark] || '';
+  let tag = '';
+  if(s.lv == null) tag = `<span class="s3who" title="ไม่ใช่พระดำรัส">${esc(s.who || 'คำบรรยาย')}</span>`;
+  else if(s.lv === 'B' || s.lv === 'BP') tag = lvB(s.lv) + (s.who ? `<span class="s3who b">${esc(s.who)}</span>` : '');
+  else tag = lvB(s.lv);
+  const f = figOf && s.id && figOf[s.id];
+  const fl = f ? `<a class="s3fl" href="#" data-fig="${esc(f.id)}" style="--c:${f.c}">${n3ic('eye', 13)}${esc(f.no)}</a>` : '';
+  return `<span class="${cl}"${s.id ? ` id="s3-${esc(s.id)}"` : ''}>${pre}${esc(s.t)}${tag}${rcHTML(s.ref)}${fl}</span> `;
+}
+
+function s3step(s, eq){
+  const r0 = s.ref && s.ref[0] && s.ref[0].seg, el = (s.ref || []).some(r => r.elided);
+  return `<div class="stp${el ? ' el' : ''}${s.mark === 'key' ? ' key' : ''}"${r0 ? ` data-seg="${esc(r0)}"` : ''}>${s.value ? `<span class="vl">${esc(s.value)}</span>` : ''}${esc(s.text)}${lvB(s.lv)}${rcHTML(s.ref)}${s.note ? `<span class="nn">${esc(s.note)}</span>` : ''}${eq && r0 && eq[r0] ? `<span class="eq">⇆ ตรงกับ ${esc(eq[r0])}</span>` : ''}</div>`;
+}
+
+function s3figBody(f){
+  const d = f.data || {};
+  if(f.shape === 'ladder'){
+    const cols = [...d.columns].sort((a, b) => (b.sutta === f.start) - (a.sutta === f.start));
+    const head = c => `${esc(c.title)}${c.sutta === f.start && cols.length > 1 ? '<span class="s3start">เริ่มอ่านเสานี้</span>' : ''}`;
+    const up = '<span class="s3axis" aria-hidden="true">↑ ขั้นสูงขึ้น</span>';
+    if(d.rows){
+      const rows = [...d.rows].reverse();
+      let h = `<div class="ld-rows" style="grid-template-columns:7.2em repeat(${cols.length},minmax(0,1fr))"><span class="s3ax">${up}</span>${cols.map(c => `<span class="hd">${head(c)}</span>`).join('')}`;
+      rows.forEach((r, k) => { h += `<span class="rl${k === 0 ? ' top' : ''}">${esc(r.label)}</span>`;
+        cols.forEach(c => { const s = c.steps.find(x => x.row === r.key); h += s ? s3step(s) : '<span class="stp empty"></span>'; }); });
+      return h + '</div><div class="s3bot">ขั้นล่างสุด · เริ่มอ่านจากตรงนี้แล้วไล่ขึ้น</div>';
+    }
+    const name = {}; cols.forEach(c => c.steps.forEach(s => { if(s.ref && s.ref[0]) name[s.ref[0].seg] = label(c.sutta) + ': ' + s.text.slice(0, 24) + (s.text.length > 24 ? '…' : ''); }));
+    const eq = {}; (d.same || []).forEach(([a, b]) => { eq[a] = name[b]; eq[b] = name[a]; });
+    return `<div class="ld-wrap"><div class="ld-cols" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">${cols.map(c => `<div class="ld-col"><h5>${head(c)}</h5><div class="up">↑ ผลมากขึ้น</div><div class="stk">${c.steps.map(s => s3step(s, eq)).join('')}</div><div class="up">ขั้นแรก ↓ เริ่มที่นี่</div></div>`).join('')}<svg class="ld-svg" aria-hidden="true" data-same='${esc(JSON.stringify(d.same || []))}'></svg></div></div>
+      ${(d.same || []).length ? `<div class="s3lk"><i></i> เส้นประข้ามเสา = ขั้นที่${d.align === 'room' ? 'ห้องสนทนาเห็นว่า' : ''}ตรงกัน${d.align === 'room' ? ' (ตัวบทไม่ได้โยงเอง)' : ''} · บนจอแคบแสดงเป็นป้าย ⇆</div>` : ''}`;
+  }
+  if(f.shape === 'pair'){
+    const [L, R] = d.sides, n = Math.max(L.items.length, R.items.length), win = d.winner;
+    const hd = s => `<div class="pc hd${s.title === win ? ' win' : ''}">${esc(s.title)}${s.title === win ? `<span class="s3win">★ ตัวบทชี้ว่าเลิศ / ดีกว่า</span>` : ''}</div>`;
+    let h = `<div class="s3pair">${hd(L)}<div class="pv" aria-hidden="true"></div>${hd(R)}`;
+    for(let i = 0; i < n; i++){ const a = L.items[i], b = R.items[i];
+      const c = (it, s) => it ? `<div class="pc${s.title === win ? ' win' : win ? ' lose' : ''}">${esc(it.text)}${lvB(it.lv)}${rcHTML(it.ref)}</div>` : '<div class="pc empty"></div>';
+      h += `${c(a, L)}<div class="pv" aria-hidden="true">${win ? (R.title === win ? '‹' : '›') : '·'}</div>${c(b, R)}`; }
+    h += '</div>';
+    if(d.center || win) h += `<div class="s3res">${d.center ? `<b>${esc(d.center)}</b>` : `<b>ฝั่ง "${esc(win)}" เลิศกว่า</b>`}${d.winner_ref ? ' · ตัวบทตรัสไว้ที่' + rcHTML(d.winner_ref) : ''}</div>`;
+    return h;
+  }
+  if(f.shape === 'list'){
+    const fr = (d.items || []).some(x => x.fruit);
+    return `<div class="s3cap">${fr ? 'ข้อ → ผลที่ตรัสคู่กับข้อนั้น' : 'หมวดธรรม ' + tdig(d.count || d.items.length) + ' ข้อ'}</div><ol class="ls${fr ? ' fr' : ''}">${d.items.map(it => `<li><span>${esc(it.text)}${lvB(it.lv)}${rcHTML(it.ref)}</span>${fr ? `<span class="ar">→</span><span class="fruit">${esc(it.fruit || '')}</span>` : ''}</li>`).join('')}</ol>`;
+  }
+  if(f.shape === 'flow'){
+    const v = d.steps.length > 4;
+    return `<div class="fl${v ? ' v' : ''}">${d.steps.map(s => s3step(s)).join('<span class="ar" aria-hidden="true">→</span>')}</div>`;
+  }
+  if(f.shape === 'question'){
+    return `<div class="qa">${d.items.map(q => `<div><div class="q">${esc(q.q)} <small>— ${esc(q.q_by || '')}</small></div><div class="a">${esc(q.a)}${lvB(q.lv)}${rcHTML(q.ref)}</div></div>`).join('')}</div>`;
+  }
+  if(f.shape === 'table'){
+    return `<div class="s3tw"><table class="s3tb"><thead><tr>${d.cols.map(c => `<th>${esc(c)}</th>`).join('')}<th>อ้างอิง</th></tr></thead><tbody>${d.rows.map(r => `<tr${r.mark === 'key' ? ' class="key"' : ''}>${r.cells.map(c => `<td>${esc(c)}</td>`).join('')}<td class="rf">${lvB(r.lv)}${rcHTML(r.ref)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  return `<div class="s3cap">${esc(f.describe || '')}</div>`;
+}
+
+function s3fig(f, no, c){
+  const d = f.data || {};
+  return `<figure class="s3fig" id="s3f-${esc(f.id)}" style="--c:${c}">
+    <figcaption><span class="no">${esc(no)}</span><span class="it">${esc(f.intent)}</span></figcaption>
+    <div class="s3how">${n3ic('eye', 16)}<span><b>วิธีอ่าน</b> ${esc(f.how_to_read)}</span></div>
+    <div class="s3fb">${s3figBody(f)}</div>
+    ${f.emphasis ? `<div class="s3emph"><b>★ จุดที่ควรเห็น</b> ${esc(f.emphasis)}</div>` : ''}
+    ${d.note ? `<div class="s3cap">ⓘ ${esc(d.note)}</div>` : ''}
+    ${(f.told_in || []).length ? `<button type="button" class="s3told" data-told="${esc(f.told_in.join(' '))}">↑ อ่านคำอธิบายรูปนี้ในเรื่อง (${tdig(f.told_in.length)} ประโยค)</button>` : ''}
+  </figure>`;
+}
+
+// แผนภาพแกน: วงหลักตามเส้นแรกของแต่ละจุด กิ่งข้างวางนอกวง เส้นทึบ = พระสูตรเชื่อม เส้นประ = ห้องสนทนาเชื่อม
+function s3core(C){
+  const ids = C.nodes.map(n => n.id), byId = Object.fromEntries(C.nodes.map(n => [n.id, n]));
+  let ring = [ids[0]], cur = ids[0];
+  for(let g = 0; g < ids.length; g++){ const l = C.links.find(x => x.from === cur && (x.to === ids[0] || !ring.includes(x.to))); if(!l || l.to === ids[0]) break; ring.push(l.to); cur = l.to; }
+  const closed = C.links.some(x => x.from === ring[ring.length - 1] && x.to === ring[0]);
+  if(ring.length < 3 || !closed) ring = ids.slice();
+  const W = 600, H = 570, cx = 300, cy = 272, R = 152, RB = 252, P = {}, A = {};
+  ring.forEach((id, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / ring.length; A[id] = a; P[id] = [cx + R * Math.cos(a), cy + R * Math.sin(a), 42]; });
+  const br = ids.filter(id => !ring.includes(id)), used = {};
+  br.forEach(id => {
+    const nb = C.links.filter(l => l.from === id || l.to === id).map(l => l.from === id ? l.to : l.from).filter(x => ring.includes(x));
+    let a;
+    if(nb.length >= 2){ let s = 0, c = 0; nb.forEach(x => { s += Math.sin(A[x]); c += Math.cos(A[x]); }); a = Math.atan2(s, c); }
+    else a = (nb.length ? A[nb[0]] : 0) + 0.34;
+    const k = Math.round(a * 10); a += (used[k] || 0) * 0.42; used[k] = (used[k] || 0) + 1;
+    A[id] = a; P[id] = [Math.min(W - 44, Math.max(44, cx + RB * Math.cos(a))), Math.min(H - 52, Math.max(38, cy + RB * Math.sin(a))), 34];
+  });
+  let num = 0;
+  const L = C.links.map(l => ({...l, n:++num}));
+  const edge = l => {
+    const [x1, y1, r1] = P[l.from], [x2, y2, r2] = P[l.to], room = l.kind === 'room';
+    const ia = ring.indexOf(l.from), ib = ring.indexOf(l.to);
+    let d, mx, my;
+    if(ia >= 0 && ib >= 0 && (ib - ia + ring.length) % ring.length === 1){
+      const g1 = A[l.from] + (r1 + 6) / R, g2 = A[l.to] - (r2 + 8) / R + (ib === 0 ? 2 * Math.PI : 0), gm = (g1 + g2) / 2;
+      d = `M${(cx + R * Math.cos(g1)).toFixed(1)},${(cy + R * Math.sin(g1)).toFixed(1)} A${R},${R} 0 0 1 ${(cx + R * Math.cos(g2)).toFixed(1)},${(cy + R * Math.sin(g2)).toFixed(1)}`;
+      mx = cx + R * Math.cos(gm); my = cy + R * Math.sin(gm);
+    } else {
+      const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+      const sx = x1 + ux * (r1 + 4), sy = y1 + uy * (r1 + 4), ex = x2 - ux * (r2 + 8), ey = y2 - uy * (r2 + 8);
+      const bend = ring.includes(l.from) && ring.includes(l.to) ? 0 : 18, qx = (sx + ex) / 2 - uy * bend, qy = (sy + ey) / 2 + ux * bend;
+      d = `M${sx.toFixed(1)},${sy.toFixed(1)} Q${qx.toFixed(1)},${qy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+      mx = (sx + 2 * qx + ex) / 4; my = (sy + 2 * qy + ey) / 4;
+    }
+    return {path:`<path class="${room ? 'room' : 'sut'}" d="${d}" marker-end="url(#s3ar${room ? 'r' : ''})"/>`,
+      badge:`<g class="s3lb ${room ? 'room' : 'sut'}" data-l="${l.n}" transform="translate(${mx.toFixed(1)},${my.toFixed(1)})"><circle r="10"/><text y="4" text-anchor="middle">${tdig(l.n)}</text></g>`};
+  };
+  const E = L.map(edge);
+  const node = id => { const nd = byId[id], [x, y, r] = P[id], big = r > 40;
+    return `<a class="s3node${big ? '' : ' br'}" href="#snote/${esc(NS.id)}/${esc(nd.section)}" data-go="${esc(nd.section)}" style="--c:${s3col(id)}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+      <circle r="${r}"/><g transform="translate(${big ? -12 : -10},${big ? -27 : -23}) scale(${big ? 1 : .85})" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${N3ICON[s3icon(nd)] || ''}</g>
+      <text class="lb" y="${big ? 15 : 13}" text-anchor="middle">${esc(nd.label)}</text>${nd.sub ? `<text class="sb" y="${r + 15}" text-anchor="middle">${esc(nd.sub)}</text>` : ''}</a>`; };
+  const ct = C.center || {}, words = String(ct.t || '').split(/\s+/), lines = [];
+  words.forEach(w => { const l = lines[lines.length - 1]; if(l != null && (l + ' ' + w).length <= 15) lines[lines.length - 1] = l + ' ' + w; else lines.push(w); });
+  const cref = (ct.ref || [])[0];
+  const hub = ct.t ? `<g class="s3hub"${cref && cref.sutta ? ` data-s="${esc(cref.sutta)}" data-a="${esc(cref.seg)}" data-z="${esc(cref.to || cref.seg)}" role="button" tabindex="0" aria-label="${esc(ct.t)} เปิดย่อหน้าพระสูตร"` : ''}><circle cx="${cx}" cy="${cy}" r="66"/>${lines.slice(0, 4).map((t, i) => `<text x="${cx}" y="${cy - 14 - (lines.length - 2) * 9 + i * 19}" text-anchor="middle"${i ? ' class="s"' : ''}>${esc(t)}</text>`).join('')}${cref && cref.sutta ? `<text class="r" x="${cx}" y="${cy + 46}" text-anchor="middle">${esc(label(cref.sutta))} ↗</text>` : ''}</g>` : '';
+  const svg = `<svg class="s3cyc" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(C.title || 'แผนภาพแกน')}">
+    <defs><marker id="s3ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker>
+    <marker id="s3arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahr"/></marker></defs>
+    <g class="eg">${E.map(e => e.path).join('')}</g>${hub}${ids.map(node).join('')}<g>${E.map(e => e.badge).join('')}</g></svg>`;
+  const leg = `<ol class="s3links">${L.map(l => `<li class="${l.kind}" data-l="${l.n}"><span class="nb">${tdig(l.n)}</span><span><b>${esc(byId[l.from].label)} → ${esc(byId[l.to].label)}</b>${l.kind === 'sutta' ? ` · ${esc(l.label || '')}${rcHTML(l.ref)}` : ` · <i>ห้องสนทนาลากเส้นนี้เอง:</i> ${esc(l.why || '')}`}</span></li>`).join('')}</ol>`;
+  return {svg, leg};
+}
+
+function renderSnote(){
+  const M = NS.data, nv = $('#noteview'), C = M.core;
+  const nodeOf = Object.fromEntries(C.nodes.map(n => [n.id, n]));
+  // หมายเลขรูป + ประโยคที่เล่ารูป
+  const figOf = {}, figNo = {};
+  M.sections.forEach((s, i) => (s.figures || []).forEach((f, j) => { const no = `รูป ${tdig(i + 1)}.${tdig(j + 1)}`; figNo[f.id] = no; const t0 = (f.told_in || [])[0]; if(t0) figOf[t0] = {id:f.id, no, c:s3col(s.node)}; }));
+  const core = s3core(C);
+  const sec = (s, i) => {
+    const c = s3col(s.node), nd = nodeOf[s.node] || {};
+    const figs = s.figures || [], placed = new Set();
+    const paras = s.story.map(p => {
+      const ids = new Set(p.map(x => x.id).filter(Boolean));
+      const here = figs.filter(f => !placed.has(f.id) && ids.has((f.told_in || [])[0]));
+      here.forEach(f => placed.add(f.id));
+      return `<p>${p.map(x => s3sent(x, figOf)).join('')}</p>${here.map(f => s3fig(f, figNo[f.id], c)).join('')}`;
+    }).join('');
+    const rest = figs.filter(f => !placed.has(f.id)).map(f => s3fig(f, figNo[f.id], c)).join('');
+    const q = s.quote;
+    const quote = q ? `<blockquote class="s3quote"><span class="qh"><span>พุทธพจน์ที่ยก · ฉบับหลวง</span><span>${lvB(q.lv)}${rcHTML([{seg:q.seg, to:q.to, sutta:q.sutta, elided:q.elided}])}</span></span><span class="qt">${esc(q.th)}</span>${q.pali ? `<span class="qp" lang="pi">${esc(q.pali)}</span>` : ''}${q.warn ? `<span class="qw">⚠ ${esc(q.warn)}</span>` : ''}</blockquote>` : '';
+    const warns = (s.warns || []).length ? `<div class="s3warn"><b>⚠ ระวังคำแปล / ตัวบท</b>${s.warns.map(w => `<div>${s3sent({...w, mark:null})}</div>`).join('')}</div>` : '';
+    const sus = (s.suttas || []).filter(x => M.suttas[x]);
+    return `<section class="s3sec" id="s3-${esc(s.id)}" style="--c:${c}">
+      <div class="s3rail" aria-hidden="true"><span class="dot">${n3ic(s3icon(nd), 22)}</span><span class="ln"></span></div>
+      <div class="s3body">
+        <div class="s3k">${tdig(i + 1)} · ${esc(nd.label || '')}${nd.sub ? ` <span>— ${esc(nd.sub)}</span>` : ''}</div><h3>${esc(s.title)}</h3>
+        ${s.lead ? `<p class="s3lead"><span class="by">สรุปโดยห้องสนทนา</span>${esc(s.lead)}</p>` : ''}
+        ${quote}<div class="s3story">${paras}${rest}</div>${warns}
+        ${sus.length ? `<div class="s3sus"><span>พระสูตรในส่วนนี้ (กดดูสรุปและตอนต่างๆ):</span>${sus.map(x => `<button type="button" data-sum="${esc(x)}">${esc(label(x))}</button>`).join('')}</div>` : ''}
+        <a class="s3up" href="#" data-go="top">↑ กลับแผนภาพ</a>
+      </div></section>`;
+  };
+  const toc = M.sections.map((s, i) => `<a href="#snote/${esc(NS.id)}/${esc(s.id)}" data-go="${esc(s.id)}" style="--c:${s3col(s.node)}">${tdig(i + 1)} ${esc(s.title)}</a>`).join('');
+  const cl = M.close || {};
+  const GK = {open:'ยังเปิดอยู่ (ตัวบทไม่ตัดสิน)', 'not-searched':'ยังไม่ได้ค้น', 'not-found':'ค้นแล้วไม่พบในขอบเขต'};
+  const gk = [...new Set((M.gaps || []).map(g => g.kind))];
+  nv.innerHTML = `<div class="s3">
+    <div class="s3top"><a href="#snote">← Short note ทั้งหมด</a><span class="sp"></span>${M._src === 'custom' ? '<button type="button" id="nedit">แก้ไข JSON</button>' : ''}${M._src === 'custom' || M._src === 'url' ? '<button type="button" id="nexp">ส่งออก .json</button>' : ''}<button type="button" id="nprint">พิมพ์ / บันทึก PDF</button></div>
+    <div class="s3hero" id="s3-top">
+      <div class="s3intro"><div class="s3k">Short note · ฉบับ ${tdig(M.version || 3)}</div><h2>${esc(M.title)}<small lang="pi">${esc(M.pali || '')}</small></h2>
+        ${M.question ? `<p class="s3qq"><span>คำถามของโน้ตนี้</span>${esc(M.question)}</p>` : ''}
+        <p class="s3sub">${esc(M.intro || '')}</p>
+        <div class="s3key"><span>${lvB('A')} พระดำรัส</span><span>${lvB('B')} คำผู้อื่น ทรงรับรอง</span><span>${lvB('U')} ไม่ระบุผู้กล่าว</span><span>${lvB('R')} <i>ห้องสนทนาเรียบเรียงเอง</i></span><span><span class="s3who">ชื่อผู้พูด</span> คำถามหรือคำบรรยาย ไม่ใช่พระดำรัส</span><span><b class="s3s mk-key">ขีดเน้น</b> จุดสำคัญ</span><span>⚠ ระวังคำแปล</span><span>⇄ คนละเงื่อนไข</span><span>? ยังไม่ได้ค้น</span><span><b class="rc" style="cursor:default">AN 6.37·2.4</b> กดอ่านย่อหน้านั้น</span><span><b class="rc el" style="cursor:default">AN 7.52·8.1–8.2<i>ย่อ</i></b> บาลีย่อ ความเต็มอยู่ฉบับหลวง</span><span><a class="s3fl" style="pointer-events:none">${n3ic('eye', 13)}รูป</a> ไปที่รูปที่ประโยคนี้อธิบาย</span></div>
       </div>
+      <div class="s3dia"><div class="s3dh"><b>${esc(C.title || '')}</b> <span>${esc(C.how_to_read || '')}</span></div>${core.svg}
+        <div class="s3lkey"><span><i class="sut"></i> พระสูตรเชื่อม</span><span><i class="room"></i> ห้องสนทนาเชื่อมเอง</span><span>ตัวเลขบนเส้น = รายการใต้ภาพ</span></div>
+        ${C.basis ? `<p class="s3basis">${s3sent(C.basis)}</p>` : ''}
+        <details class="s3ld"><summary>เส้นในแผนภาพมาจากไหน (${tdig(C.links.length)} เส้น)</summary>${core.leg}</details></div>
+    </div>
+    <nav class="s3toc" aria-label="สารบัญ">${toc}<a href="#" data-go="close" style="--c:var(--accent)">ปิดท้าย</a></nav>
+    ${M.sections.map(sec).join('')}
+    ${(M.user_views || []).length ? `<div class="s3uv"><b>มุมมองของผู้ศึกษา (ไม่ใช่พุทธพจน์)</b>${M.user_views.map(v => `<p>${esc(v.t)}${v.check ? `<span class="s3uvc">ห้องสนทนาตรวจแล้ว: ${esc(v.check)}</span>` : ''}${rcHTML(v.ref)}</p>`).join('')}</div>` : ''}
+    <section class="s3close" id="s3-close"><span class="dot">${n3ic('loop', 26)}</span><div>
+      <h3>${esc(cl.title || 'ปิดท้าย')}</h3>${(cl.story || []).map(p => `<p>${p.map(x => s3sent(x)).join('')}</p>`).join('')}
+      ${(cl.synthesis || []).length ? `<div class="s3syn"><b>การวิเคราะห์ของห้องสนทนา (ไม่ใช่พระดำรัส)</b>${cl.synthesis.map(x => `<p>${s3sent(x)}</p>`).join('')}</div>` : ''}
+      <a class="s3up" href="#" data-go="top">↑ กลับแผนภาพ</a></div></section>
+    ${(M.glossary || []).length ? `<details class="s3gl"><summary>ศัพท์ในโน้ตนี้ (${tdig(M.glossary.length)} คำ)</summary><dl>${M.glossary.map(g => `<dt>${esc(g.term)}${g.pali ? ` <i lang="pi">${esc(g.pali)}</i>` : ''}</dt><dd>${esc(g.means)}${lvB(g.lv)}${g.who ? `<span class="s3who b">${esc(g.who)}</span>` : ''}${rcHTML(g.ref)}</dd>`).join('')}</dl></details>` : ''}
+    <div class="s3gaps"><b>ขอบเขตและสิ่งที่ยังค้าง</b>${M.scope ? `<p><b>ค้นที่ไหน:</b> ${esc(M.scope.searched || '')}</p><p>${esc(M.scope.notes || '')}</p>` : ''}
+      ${gk.map(k => `<h4>${esc(GK[k] || k)}</h4><ul>${M.gaps.filter(g => g.kind === k).map(g => `<li>${esc(g.t)}</li>`).join('')}</ul>`).join('')}</div>
+    <p class="nfoot">${tdig(M.sections.length)} ส่วน · ${tdig(M.sections.reduce((n, s) => n + (s.figures || []).length, 0))} รูป · ${tdig(Object.keys(M.suttas).length)} พระสูตร · เนื้อหาโดยห้องสนทนาเรื่อง${esc(M.title.replace(/ใน.*$/, ''))} ตามแบบฟอร์มกลาง · ห้องควบคุมตรวจรหัสท่อนและระดับหลักฐานทุกช่วง · ฉบับ ${tdig(M.version || 3)} (${esc(M.updated || '')})</p>
+  </div><div class="nscrim" id="nscrim"></div><aside class="ndrawer" id="ndrawer" aria-label="ย่อหน้าพระสูตร" tabindex="-1"></aside>`;
+  $('#nprint').onclick = () => window.print();
+  if($('#nedit')) $('#nedit').onclick = () => openSnotePasteModal(M.note);
+  if($('#nexp')) $('#nexp').onclick = () => downloadSnoteJSON(M);
+  const go = k => { const el = k === 'top' ? document.getElementById('s3-top') : document.getElementById('s3-' + k); if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'start'}); if(k !== 'top') flashBox(el);
+    history.replaceState(null, '', '#snote/' + NS.id + (k === 'top' ? '' : '/' + k)); };
+  nv.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); go(a.dataset.go); }));
+  nv.querySelectorAll('[data-fig]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); const el = document.getElementById('s3f-' + a.dataset.fig); if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); flashBox(el); } }));
+  nv.querySelectorAll('.s3told').forEach(b => b.onclick = () => { const ids = b.dataset.told.split(' '), els = ids.map(i => document.getElementById('s3-' + i)).filter(Boolean);
+    if(!els.length) return; els[0].scrollIntoView({behavior:'smooth', block:'center'}); els.forEach(e => { e.classList.remove('told'); void e.offsetWidth; e.classList.add('told'); }); });
+  nv.querySelectorAll('[data-sum]').forEach(b => b.onclick = () => openSutta(b.dataset.sum));
+  nv.querySelectorAll('.s3hub[data-s]').forEach(g => { const f = () => openPara(g.dataset.s, g.dataset.a, g.dataset.z, {}); g.addEventListener('click', f); g.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); f(); } }); });
+  nv.querySelectorAll('.s3lb').forEach(g => g.addEventListener('click', () => { const d = nv.querySelector('.s3ld'); d.open = true; const li = d.querySelector(`li[data-l="${g.dataset.l}"]`); if(li){ li.scrollIntoView({behavior:'smooth', block:'nearest'}); flashBox(li); } }));
+  bindRefs(nv);
+  $('#nscrim').onclick = closeSutta;
+  drawSame();
+}
 
-      <div class="svg-container">
-        <svg id="circuitSvg" viewBox="0 0 520 520" role="img" aria-label="แผนภาพวงจรธรรม"></svg>
-      </div>
+// ย่อหน้าฉบับหลวงของท่อนที่อ้าง (จากแผนที่ระดับท่อน 3A/3B): เน้นช่วงที่อ้างในย่อหน้าบาลีเดียวกัน
+async function thaiPara(sid, a, z){
+  const meta = state.byId[sid]; if(!meta || !meta.th) return null;
+  if(meta.th[1].length !== 1){  // ช่วงสูตรสั้น (AN 1–2): แสดงข้อฉบับหลวงของสูตรย่อยทั้งข้อ
+    const us = meta.subu && meta.subu[a.split(':')[0]]; if(!us || us.length !== 1) return null;
+    const v = meta.th[0], unit = (await loadThai(v))[us[0]]; if(!unit) return null;
+    const segs0 = (await loadGroup(meta.g))[sid] || [], j0 = segs0.findIndex(x => x.i === a), j1 = Math.max(j0, segs0.findIndex(x => x.i === (z || a)));
+    const n = unit.x.length, cut = n > 1600;
+    return {X:unit.x, A:0, B:cut ? 1600 : n, hA:0, hB:cut ? 1600 : n, cutA:false, cutB:cut, u:us[0], spans:((await loadSpk(v)) || {})[us[0]] || null, key:`ข้อ ${tdig(unit.k[0])}`, segs:segs0.slice(j0, j1 + 1)};
+  }
+  const v = meta.th[0], u = meta.th[1][0], unit = (await loadThai(v))[u]; if(!unit || unit.sc.length !== 1) return null;
+  const pts = (((await loadAln(v)) || {})[u] || []).filter(p => p[1] >= 0).sort((x, y) => x[0] - y[0]);
+  if(pts.length < 3) return null;
+  const segs = (await loadGroup(meta.g))[sid] || [], ix = id => segs.findIndex(x => x.i === id);
+  const i0 = ix(a), i1 = Math.max(i0, ix(z || a)); if(i0 < 0) return null;
+  const st = i => { let o = null; for(const p of pts){ if(p[1] <= i) o = p[0]; else break; } return o == null ? pts[0][0] : o; };
+  const en = i => { for(const p of pts){ if(p[1] > i && p[0] > st(i)) return p[0]; } return unit.x.length; };
+  const pk = i => { const b = segs[i].i.split(':')[1], k = b.lastIndexOf('.'); return k < 0 ? b : b.slice(0, k); };
+  let pa = i0, pb = i1; while(pa > 0 && pk(pa - 1) === pk(i0)) pa--; while(pb + 1 < segs.length && pk(pb + 1) === pk(i1)) pb++;
+  let A = st(pa), B = en(pb); const hA = st(i0), hB = Math.max(en(i1), hA + 1);
+  const cutA = A < hA - 500, cutB = B > hB + 500; if(cutA) A = hA - 500; if(cutB) B = hB + 500;
+  return {X:unit.x, A, B, hA, hB, cutA, cutB, u, spans:((await loadSpk(v)) || {})[u] || null, key:`${sid}:${pk(i0)}${pk(i1) !== pk(i0) ? '–' + pk(i1) : ''}`, segs:segs.slice(i0, i1 + 1)};
+}
+function paraHTML(P){
+  let h = '<p>' + (P.cutA ? '… ' : '') + `<span data-o="${P.A}">`, i = P.A;
+  while(i < P.B){
+    const c = P.X[i];
+    if(c === '\n'){ h += `</span></p><p><span data-o="${i + 1}">`; i++; continue; }
+    const lab = P.spans ? spkAt(P.spans, i) : 'B', hl = i >= P.hA && i < P.hB;
+    let j = i + 1; while(j < P.B && P.X[j] !== '\n' && (P.spans ? spkAt(P.spans, j) : 'B') === lab && (j >= P.hA && j < P.hB) === hl) j++;
+    h += `<span class="sp ${lab === '?' ? 'Q' : lab}${hl ? ' cite' : ''}" title="${SPKNAME[lab] || ''}">${thaiChunk(P.X.slice(i, j), false)}</span>`; i = j;
+  }
+  return h + '</span>' + (P.cutB ? ' …' : '') + '</p>';
+}
+async function openPara(sid, a, z, o){
+  o = o || {};
+  const dr = $('#ndrawer'); if(!dr) return;
+  const meta = state.byId[sid], S = ((NS.data || {}).suttas || {})[sid];
+  const th = '#' + toHash(sid) + '@' + a + '!th', pe = '#' + toHash(sid) + '@' + a;
+  dr.innerHTML = `<button class="x" aria-label="ปิด">×</button><div class="sid">${esc(label(sid))} · ${esc(nkName(sid))}</div><h3>${esc(S ? S.th : (meta && (meta.tt || meta.tp)) || sid)}</h3>
+    ${S ? `<div class="sid">ฉบับหลวง เล่ม/หน้า/ข้อ ${esc(S.loc)}${S.audience ? ' · ผู้ฟัง: ' + esc(S.audience) : ''}</div>` : ''}
+    ${o.e ? `<div class="s3el"><b>บาลีตรงนี้ย่อไว้ (…pe…)</b> ${o.n ? esc(o.n) : 'ความเต็มของช่วงนี้ไม่มีในบาลีตอนนี้'}${o.th ? ` · ความเต็มอยู่ฉบับหลวง <b>${esc(o.th)}</b>` : ''} — ย่อหน้าฉบับหลวงด้านล่างคือที่ที่ผู้แปลขยายความเต็มไว้ <a href="${th}">เปิดฉบับหลวงที่ตรงนี้ ↗</a></div>` : o.n ? `<div class="s3el n">ⓘ ${esc(o.n)}</div>` : ''}
+    <div class="n3pv" id="n3pv">กำลังโหลดย่อหน้า…</div>
+    <div class="acts"><a href="${th}">อ่านทั้งสูตร (ฉบับหลวง ที่ย่อหน้านี้) ↗</a><a href="${pe}">บาลี–อังกฤษ ↗</a>${S ? '<button type="button" id="n3sum">สรุปพระสูตรและตอนต่างๆ</button>' : ''}</div>`;
+  dr.querySelector('.x').onclick = closeSutta;
+  if(S) $('#n3sum').onclick = () => openSutta(sid, a, z);
+  dr.classList.add('open'); $('#nscrim').classList.add('open'); dr.scrollTop = 0; dr.focus();
+  const pv = $('#n3pv');
+  try{
+    const P = await thaiPara(sid, a, z);
+    const segs = P ? P.segs : (() => null)();
+    let pali = segs; if(!pali){ const g = (await loadGroup(meta.g))[sid] || [], i0 = g.findIndex(x => x.i === a), i1 = g.findIndex(x => x.i === (z || a)); pali = g.slice(i0, Math.max(i0, i1) + 1); }
+    const ph = pali.slice(0, 12).map(x => `<div class="s ${cls(x) === 'B' ? 'B' : cls(x) === 'O' ? 'O' : ''}"><span class="w">${esc(x.i)} · ${esc((whoLabel(x) || ['ผู้รวบรวม'])[0])}</span><div class="p">${esc(x.p)}</div></div>`).join('') + (pali.length > 12 ? `<div class="w">… อีก ${tdig(pali.length - 12)} ท่อน</div>` : '');
+    pv.innerHTML = (P ? `<div class="n3ph"><span>ย่อหน้า ${esc(P.key)} · ฉบับหลวง</span><span class="lg"><i class="cite">พื้นเหลือง</i> = ช่วงที่โน้ตอ้าง</span></div><div class="thai n3th" lang="th">${paraHTML(P)}</div><div class="n3note">จับคู่ย่อหน้าอัตโนมัติ (Phase 3A) อาจคลาด ±๑ ประโยค · สีตัวอักษร = ผู้พูด</div>`
+      : `<div class="n3note">สูตรนี้ฉบับหลวงรวมไว้กับสูตรอื่นในหน่วยเดียว จึงยังตัดเป็นย่อหน้าไม่ได้ — กด "อ่านทั้งสูตร" เพื่อเปิดฉบับหลวงทั้งหน่วย</div>`)
+      + `<details class="n3pali"${P ? '' : ' open'}><summary>บาลีของช่วงที่อ้าง (${tdig(pali.length)} ท่อน)</summary><div class="pv">${ph}</div></details>`;
+    if(P){ await loadTrn(); const nm = markTrn(pv.querySelector('.n3th'), sid, P.u); if(nm){ const d = document.createElement('div'); d.className = 'n3note trnn'; d.innerHTML = `<span class="trn mid demo">ขีดเส้นใต้สีส้ม</span><sup class="trn-i mid demo">※</sup> = ย่อหน้านี้มีหมายเหตุคำแปล (คำแปลคลาด คำเติม หรือพิมพ์ผิด) กดที่ข้อความเพื่อดูบาลีและคำที่ควรเป็น`; pv.querySelector('.n3th').after(d); } }
+  }catch(e){ pv.textContent = 'โหลดไม่สำเร็จ: ' + e.message; }
+}
 
-      <div class="node-inspector" id="nodeInspector">
-        <div class="inspector-header">
-          <span class="inspector-tag" id="inspectorNodeTag">โหนดที่เลือก</span>
-          <button id="resetNodeBtn" class="text-link-btn">ดูทุกโหนดในหัวข้อนี้</button>
-        </div>
-        <h3 class="inspector-title" id="inspectorTitle">—</h3>
-        <p class="inspector-summary" id="inspectorSummary">—</p>
-      </div>
-    </aside>
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  if(/^(note|map)(\/|$)/.test(h)){ location.replace('#snote/' + (h.split('/')[1] || 'dana')); return; }  // ลิงก์เก่าของฉบับ ๒ และแผนผัง
+  if(h === 'trn'){ showTrnIndex(); return; }
+  if(/^snote(\/|\?|$)/.test(h)){ const baseH = h.split('?')[0]; const ps = baseH.split('/');
+    if(!ps[1]){ showSnoteMenu(); return; }
+    showSnote(ps[1]).then(() => { const el = ps[2] && document.getElementById('s3-' + ps[2]); if(el) el.scrollIntoView({block:'start'}); else window.scrollTo(0, 0); }); return; }
+  if(state.view === 'note' || state.view === 'trn') state.fromMap = state.noteId;
+  else if(!/^[a-z]/.test(h)) state.fromMap = null;
+  setView('read');
+  // ลิงก์ลึกระดับท่อน: #an8-37@an8.37:1.3 (แท็บบาลี) หรือ #mn142@mn142:7.5!th (แท็บไทย ย่อหน้าที่จับคู่กับท่อนนั้น)
+  const ms = h.match(/^([^@]+)@([^!]+?)(!th)?$/);
+  if(ms){ routeSeg(ms[1], ms[2], !!ms[3]); return; }
+  if(/^(sn\d+-|an\d+-|dn\d+$|mn\d+$|dhp\d+-\d+$|ud\d+-|iti\d+$|snp\d+-)/.test(h)){ const f = pendingFocus, t = pendingTerm, fs = state.fromSearch, sn = pendingSec; pendingFocus = null; pendingTerm = null; pendingSec = null; state.fromSearch = false; showSutta(fromHash(h), f, t, fs || (state.lastSearch && state.lastSearch.nav === h), sn); if(fs && state.lastSearch) state.lastSearch.nav = h; }
+  else if(state.lastSearch) restoreSearch();
+  else home();
+}
+$('#lang').addEventListener('change', () => { $('#q').placeholder = $('#lang').value==='th' ? 'ค้นคำไทย เช่น วิญญาณ, อนาคามี' : $('#lang').value==='p' ? 'ค้นบาลี เช่น viññāṇa (พิมพ์ vinnana ได้)' : 'ค้นอังกฤษ เช่น consciousness'; });
+$('#sf').addEventListener('submit', e => { e.preventDefault(); if(location.hash) history.replaceState(null,'',location.pathname); search(); });
+window.addEventListener('hashchange', route);
+$('#navRead').addEventListener('click', e => { e.preventDefault(); $('#homeLink').click(); });
+$('#homeLink').addEventListener('click', e => { e.preventDefault(); state.lastSearch = null; state.fromMap = null; setView('read'); $('#q').value = ''; if(location.hash) history.pushState(null, '', location.pathname); home(); window.scrollTo(0, 0); });
+(async () => {
+  try{
+    const [dn, mn, sn, an, kn] = await Promise.all([getJSON('data/dn-index.json'), getJSON('data/mn-index.json'), getJSON('data/sn-index.json'), getJSON('data/an-index.json'), getJSON('data/kn-index.json')]);
+    state.index = dn.concat(mn, sn, an, kn);
+    state.index.forEach(s => { s.nk = nkOf(s.id); state.byId[s.id] = s; (state.byGroup[s.g] ||= []).push(s); });
+    $('#status').textContent = `${tdig(state.index.length)} สูตร พร้อมอ่าน`;
+    renderTOC(); route();
+  }catch(err){ $('#status').textContent = 'โหลดข้อมูลไม่สำเร็จ: ' + err.message + ' ลองรีเฟรชหน้า'; }
+})();
 
-    <!-- Right Column: Evidence & Study Feed -->
-    <section class="content-panel" aria-live="polite">
-      <div class="content-header">
-        <div>
-          <span class="topic-kicker" id="contentKicker">หมวดธรรม</span>
-          <h2 class="content-heading" id="contentHeading">หัวข้อ</h2>
-        </div>
-        <div class="content-stats" id="contentStats">0 รายการ</div>
-      </div>
+// สลับพื้นหลัง: ค่าเริ่มต้นมืด (ตกลงกับผู้ใช้ 11 พ.ย.) · จำค่าในเบราว์เซอร์นี้
+(function(){ const b = document.getElementById('themeBtn'); if(!b) return;
+  const cur = () => document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  const paint = () => { b.textContent = cur() === 'dark' ? '☀ สว่าง' : '☾ มืด'; b.title = cur() === 'dark' ? 'เปลี่ยนเป็นพื้นหลังสว่าง' : 'เปลี่ยนเป็นพื้นหลังมืด'; };
+  b.onclick = () => { const t = cur() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); try{ localStorage.setItem('pk-theme', t); }catch(e){} paint(); if(state.view === 'note') drawSame(); };
+  paint(); })();
+</script>
 
-      <div id="cardsContainer" class="cards-container"></div>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <p>พุทธพจน์ UI v5 — ออกแบบเพื่อการสอบทานพระดำรัสจากพระไตรปิฎกแยกชั้นกับบทเรียบเรียงเชื่อมโยงอย่างชัดเจน</p>
-  </footer>
-
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+</body></html>
