@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ห้องอ่านพุทธพจน์ · Gemini Edition</title>
+<title>ห้องอ่านพุทธพจน์</title>
 <script>(function(){var t='dark';try{t=localStorage.getItem('pk-theme')||'dark'}catch(e){}document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -115,13 +115,25 @@ code{font-family:var(--f-mono);font-size:.85em;background:var(--bg);padding:1px 
 #tabbody.bf-dim .seg.O:hover,#tabbody.bf-dim .seg.N:hover{opacity:.95}
 #tabbody.bf-dim .pr-row.O>div,#tabbody.bf-dim .pr-row.N>div{opacity:.32;transition:opacity .15s}
 #tabbody.bf-dim .pr-row.O:hover>div,#tabbody.bf-dim .pr-row.N:hover>div{opacity:.95}
-#tabbody.bf-dim .thai .sp.O,#tabbody.bf-dim .thai .sp.N,#tabbody.bf-dim .thai .sp.U{opacity:.32;transition:opacity .15s}
-#tabbody.bf-dim .thai .sp.O:hover,#tabbody.bf-dim .thai .sp.N:hover,#tabbody.bf-dim .thai .sp.U:hover{opacity:.95}
+#tabbody.bf-dim .thai .sp.O,#tabbody.bf-dim .thai .sp.N{opacity:.32;transition:opacity .15s}
+#tabbody.bf-dim .thai .sp.O:hover,#tabbody.bf-dim .thai .sp.N:hover{opacity:.95}
+#tabbody.bf-au .seg:not(.B):not(.U){display:none}
+#tabbody.bf-au .pr-row:not(.B):not(.U):not(.H){display:none}
+#tabbody.bf-au .thai .sp.O,#tabbody.bf-au .thai .sp.N{opacity:.18;font-size:.88em}
+#tabbody.bf-au .pblk.no-au{display:none}
 #tabbody.bf-only .seg:not(.B){display:none}
 #tabbody.bf-only .pr-row:not(.B):not(.H){display:none}
 #tabbody.bf-only .thai .sp.O,#tabbody.bf-only .thai .sp.N,#tabbody.bf-only .thai .sp.U{opacity:.18;font-size:.88em}
 #tabbody.bf-only .pblk.no-b{display:none}
+#tabbody.hide-gloss .gloss{display:none}
 #tabbody.hide-en .pe,#tabbody.hide-en .seg .e{display:none}
+.seg.U{border-left-color:var(--unattr);background:color-mix(in srgb,var(--unattr) 10%,transparent)}
+.seg.U .who{color:var(--unattr)}
+.pr-row.U .pl{border-left-color:var(--unattr)} .pr-row.U .tl{color:var(--unattr)}
+.s3.sn-dim-r .s3s.R,.s3.sn-dim-r .s3lead,.s3.sn-dim-r .s3syn{opacity:.3;transition:opacity .15s}
+.s3.sn-dim-r .s3s.R:hover{opacity:.95}
+.s3.sn-only-p .s3s.R,.s3.sn-only-p .s3s.ot,.s3.sn-only-p .s3lead,.s3.sn-only-p .s3syn{opacity:.22;transition:opacity .15s}
+.s3.sn-only-p .s3s.R:hover,.s3.sn-only-p .s3s.ot:hover{opacity:.95}
 .cpseg{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:4px;padding:1px 6px;font:500 .68rem var(--f-thai);cursor:pointer;margin-left:6px;vertical-align:middle}
 .cpseg:hover{border-color:var(--accent);color:var(--accent)}
 .cpseg.ok{background:var(--accent);color:var(--bg);border-color:var(--accent)}
@@ -415,7 +427,7 @@ details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
 .mnode.hid,.mhub.hid{display:none}
 .mnode .t{font-weight:600;display:block}
 .mnode .f{display:flex;gap:6px;align-items:center;margin-top:4px;font-size:.72rem;color:var(--muted);font-family:var(--f-mono)}
-.lv{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:4px;font:700 .7rem var(--f-mono);border:1px solid}
+.lv{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:4px;font:700 .7rem var(--f-mono);border:1px solid;cursor:pointer;line-height:1}.lv:hover{filter:brightness(.94)}
 .lv.A{color:var(--buddha);background:var(--buddha-soft);border-color:var(--buddha)}
 .lv.B,.lv.BP{color:var(--endorse);background:var(--endorse-soft);border-color:var(--endorse)}
 .lv.C{color:var(--warn);background:var(--warn-soft);border-color:var(--warn)}
@@ -744,7 +756,7 @@ details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
 
 <div class="wrap">
   <header>
-    <h1><a href="#" id="homeLink" class="homelink" title="กลับหน้าแรก">ห้องอ่านพุทธพจน์</a> <span class="pill b" style="font-size:.74rem;vertical-align:middle;margin-left:4px">Gemini Edition</span> <small>ทีฆ · มัชฌิม · สังยุตต · อังคุตตร · ขุททกนิกาย (พุทธพจน์) · ฉบับหลวง</small></h1>
+    <h1><a href="#" id="homeLink" class="homelink" title="กลับหน้าแรก">ห้องอ่านพุทธพจน์</a> <small>ทีฆ · มัชฌิม · สังยุตต · อังคุตตร · ขุททกนิกาย (พุทธพจน์) · ฉบับหลวง</small></h1>
     <nav class="topnav" aria-label="มุมมอง"><a href="#" data-v="read" class="on" id="navRead">อ่านและค้น</a><a href="#snote" data-v="note">Short note</a><a href="#trn" data-v="trn">หมายเหตุคำแปล</a><button type="button" id="themeBtn" class="themebtn" aria-label="สลับพื้นหลังสว่าง/มืด"></button></nav>
     <div class="legend" aria-label="คำอธิบายสี">
       <span><i class="sw" style="background:var(--buddha)"></i>พระดำรัส (A)</span>
@@ -763,6 +775,7 @@ details.help ul{margin:.4em 0;padding-left:1.2em;max-width:72ch}
       <option value="AU">พระดำรัส + คาถาที่ไม่ระบุผู้กล่าว</option>
       <option value="A">เฉพาะพระดำรัส (เคร่ง)</option>
       <option value="AB">พระดำรัส + B?</option>
+      <option value="uncertain">จุดที่ยังไม่แน่ชัด (B? / ? / U) — สอบทาน</option>
       <option value="all">ทุกผู้พูด</option>
     </select>
     <button class="primary" id="go" type="submit">ค้น</button>
@@ -784,12 +797,13 @@ const SAM = {1:["Devatā","เทวตาสังยุต"],2:["Devaputta","�
 const TH = '๐๑๒๓๔๕๖๗๘๙';
 const tdig = n => String(n).replace(/\d/g, d => TH[d]);
 const $ = s => document.querySelector(s);
-const state = {index:[], byId:{}, byGroup:{}, groups:{}, thai:{}, thaiNorm:{}, spk:{}, loadedAll:false, tab:'th', showSpk:true, bFilter:'all', showEn:true};
+const state = {index:[], byId:{}, byGroup:{}, groups:{}, thai:{}, thaiNorm:{}, spk:{}, loadedAll:false, tab:'th', showSpk:true, bFilter:'all', showEn:true, hideGloss:false};
 try{ if(localStorage.getItem('bv-spk')==='0') state.showSpk = false; }catch(e){}
 try{ const t = localStorage.getItem('bv-tab'); if(t) state.tab = t; }catch(e){}
 try{ const t = localStorage.getItem('bv-par'); if(t) state.parMode = t === '1'; }catch(e){}
-try{ const bf = localStorage.getItem('bv-bflt'); if(bf && ['all','dim','only'].includes(bf)) state.bFilter = bf; }catch(e){}
+try{ const bf = localStorage.getItem('bv-bflt'); if(bf && ['all','dim','au','only'].includes(bf)) state.bFilter = bf; }catch(e){}
 try{ const en = localStorage.getItem('bv-en'); if(en === '0') state.showEn = false; }catch(e){}
+try{ if(localStorage.getItem('bv-gloss') === '1') state.hideGloss = true; }catch(e){}
 
 const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ṁ|ṃ/g,'m').toLowerCase();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -815,10 +829,17 @@ const confNote = how => SURE[how] ? null : how==='gap1'
   : 'ข้อความไทยที่แสดงอาจไม่ใช่สูตรเดียวกับบาลี หรืออาจรวมหลายสูตร (มักเป็นช่วงไปยาลที่ย่อไว้) ให้ยึดแท็บบาลีเป็นหลัก';
 
 async function getJSON(path){
-  // ลองซ้ำเมื่อโหลดไม่สำเร็จ (เช่น 403 ชั่วคราวระหว่างที่ artifact เพิ่งอัปเดตรุ่น)
+  // ลองซ้ำเมื่อโหลดไม่สำเร็จชั่วคราว แต่ถ้า 404 ไม่พบไฟล์ให้หยุดทันทีไม่ต้องรอหน่วงเวลา
   let r;
   for(let k=0;k<3;k++){
-    try { r = await fetch(path, k ? {cache:'reload'} : undefined); if(r.ok) return r.json(); } catch(e) { r = {status: e.message}; }
+    try {
+      r = await fetch(path, k ? {cache:'reload'} : undefined);
+      if(r.ok) return r.json();
+      if(r.status === 404) throw new Error(path + ' 404');
+    } catch(e) {
+      if(String(e.message).includes('404')) throw e;
+      r = {status: e.message};
+    }
     await new Promise(res => setTimeout(res, 700*(k+1)));
   }
   throw new Error(path+' '+r.status);
@@ -957,9 +978,10 @@ function fillList(ul, list){
   }).join('');
 }
 
-function cls(seg){ if(seg.s==='H') return 'H'; if(seg.s==='B') return 'B'; if(seg.l==='B?') return 'Bq'; if(seg.s==='N') return 'N'; return 'O'; }
+function cls(seg){ if(seg.s==='H') return 'H'; if(seg.s==='B') return 'B'; if(seg.s===UNATTR) return 'U'; if(seg.l==='B?') return 'Bq'; if(seg.s==='N') return 'N'; return 'O'; }
 function whoLabel(seg){
   if(seg.s==='B') return ['พระพุทธเจ้า','A'];
+  if(seg.s===UNATTR) return ['ไม่ระบุผู้กล่าวในตัวบท','⚪'];
   if(seg.s==='N') return null;
   const n = seg.s==='listeners' ? 'ผู้ฟัง' : (seg.s==='?'||seg.s.startsWith('unknown')) ? 'ไม่ทราบผู้พูด' : seg.s;
   return [n, seg.l==='B?' ? 'B?' : '—'];
@@ -1124,6 +1146,18 @@ function trnPop(id, nid, ev){
   pp.querySelectorAll('a').forEach(a => a.addEventListener('click', () => pp.classList.remove('open')));
 }
 document.addEventListener('click', ev => {
+  const lvEl = ev.target.closest('.lv[data-lv]');
+  if(lvEl){
+    ev.preventDefault(); ev.stopPropagation();
+    const lv = lvEl.dataset.lv;
+    let pp = $('#trnpop'); if(!pp){ pp = document.createElement('aside'); pp.id = 'trnpop'; pp.setAttribute('role', 'dialog'); document.body.appendChild(pp); }
+    pp.innerHTML = `<button type="button" class="x" aria-label="ปิด">×</button>
+      <div class="h"><span class="k">ระดับหลักฐานในห้องพุทธพจน์</span>${lvB(lv)}</div>
+      <div style="line-height:1.65;margin:6px 0">${esc(LVT[lv] || '')}</div>
+      <div class="f">หลักของห้อง: ให้พระสูตรอธิบายพระสูตร ไม่นำคำอธิบายชั้นหลังหรือความเห็นส่วนบุคคลมาปะปนกับพระดำรัส</div>`;
+    pp.classList.add('open'); pp.querySelector('.x').onclick = () => pp.classList.remove('open');
+    return;
+  }
   const t = ev.target.closest('[data-trn]');
   if(t){ ev.preventDefault(); ev.stopPropagation(); const r = t.dataset.trs ? t : t.closest('[data-trs]'); trnPop(r ? r.dataset.trs : state.curId, t.dataset.trn, ev); return; }
   const pp = $('#trnpop'); if(pp && pp.classList.contains('open') && !ev.target.closest('#trnpop')) pp.classList.remove('open');
@@ -1153,7 +1187,7 @@ async function showTrnIndex(){
       <div class="r"><b>ข้อสังเกต</b><span>${esc(n.n || '')}</span></div>${n.w ? `<div class="r"><b>ควรอ่านว่า</b><span>${esc(n.w)}</span></div>` : ''}
       <div class="go">${(n.seg || []).slice(0, 1).map(s => `<a href="#${toHash(sid)}@${esc(s)}!th">ดูในฉบับหลวง ↗</a><a href="#${toHash(sid)}@${esc(s)}">ท่อนบาลี ${esc(s)} ↗</a>`).join('')}<span class="src">${esc(n.src || '')} · ${esc(n.id)}</span></div></div>`).join('') + '</section>';
   });
-  nv.innerHTML = h + (by.size ? '' : '<div class="card">ไม่มีรายการในหมวดนี้</div>') + '<p class="nfoot">ส่งหมายเหตุใหม่ได้ด้วยบล็อก 📮 ตามแบบฟอร์มในเอกสาร claude/กล่องรับ-บันทึกส่งห้องควบคุม.md</p></div>';
+  nv.innerHTML = h + (by.size ? '' : '<div class="card">ไม่มีรายการในหมวดนี้</div>') + '<p class="nfoot">รายการหมายเหตุคำแปลนี้ตรวจทานเทียบกับบาลีฉบับมหาสังคีติแล้ว โดยคงข้อความเดิมของฉบับหลวงไว้ทั้งหมด</p></div>';
   nv.querySelectorAll('.trnf button').forEach(b => b.onclick = () => { state.trnFlt = b.dataset.f; showTrnIndex(); });
   window.scrollTo(0, 0);
 }
@@ -1194,9 +1228,11 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
     <span class="lbl">โหมดอ่านพุทธพจน์:</span>
     <span class="bfltgrp" role="group" aria-label="ตัวกรองพุทธพจน์">
       <button type="button" data-bf="all"${state.bFilter==='all'?' class="on"':''}>แสดงทั้งหมด</button>
-      <button type="button" data-bf="dim"${state.bFilter==='dim'?' class="on"':''}>เน้นพุทธพจน์ (หรี่บริบท)</button>
-      <button type="button" data-bf="only"${state.bFilter==='only'?' class="on"':''}>เฉพาะพุทธพจน์ล้วน (B)</button>
+      <button type="button" data-bf="dim"${state.bFilter==='dim'?' class="on"':''}>เน้นพุทธพจน์</button>
+      <button type="button" data-bf="au"${state.bFilter==='au'?' class="on"':''}>พุทธพจน์ (A + ⚪U)</button>
+      <button type="button" data-bf="only"${state.bFilter==='only'?' class="on"':''}>เฉพาะระดับ A เคร่ง</button>
     </span>
+    <label class="en-tog" style="margin-left:0"><input type="checkbox" id="glosstog"${state.hideGloss?' checked':''}> ซ่อนคำเสริมผู้แปล [ ] ( )</label>
     <span id="bfltstat"></span>
     <label class="en-tog" id="entogWrap"${state.tab==='th'?' hidden':''}><input type="checkbox" id="entog"${state.showEn?' checked':''}> แสดงอังกฤษ</label>
   </div>
@@ -1206,25 +1242,35 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
   const bb = $('#backbtn'); if(bb) bb.addEventListener('click', () => { if(state.fromMap){ location.hash = '#' + state.fromMap; return; } if(location.hash) history.back(); else restoreSearch(); });
   const body = $('#tabbody');
   const applyBFilter = () => {
-    body.classList.remove('bf-dim', 'bf-only');
+    body.classList.remove('bf-dim', 'bf-au', 'bf-only');
     if(state.bFilter === 'dim') body.classList.add('bf-dim');
+    if(state.bFilter === 'au') body.classList.add('bf-au');
     if(state.bFilter === 'only') body.classList.add('bf-only');
+    body.classList.toggle('hide-gloss', state.hideGloss);
     body.classList.toggle('hide-en', !state.showEn);
     const ew = $('#entogWrap'); if(ew) ew.hidden = (state.tab === 'th');
     $('#bfltbar').querySelectorAll('[data-bf]').forEach(b => b.classList.toggle('on', b.dataset.bf === state.bFilter));
     const st = $('#bfltstat');
     if(!st) return;
     if(state.tab === 'th'){
+      if(!anySpk){
+        body.classList.remove('bf-au', 'bf-only');
+        st.innerHTML = state.bFilter !== 'all' ? '<span style="color:var(--warn)">⚠ สูตรนี้ยังไม่มีป้ายรายประโยคในภาษาไทย — ดูแท็บบาลี–อังกฤษเพื่อคัดกรองผู้พูด</span>' : '';
+        return;
+      }
       body.querySelectorAll('.pblk').forEach(blk => {
         const hasB = !!blk.querySelector('.sp.B');
+        const hasAU = hasB || !!blk.querySelector('.sp.U');
         blk.classList.toggle('no-b', !hasB);
+        blk.classList.toggle('no-au', !hasAU);
       });
-      const hid = body.querySelectorAll('.pblk.no-b').length;
-      st.textContent = state.bFilter === 'only' ? (hid ? `ซ่อน ${tdig(hid)} ย่อหน้าที่ไม่มีพระดำรัส` : 'แสดงเฉพาะช่วงพระดำรัส') : '';
+      const hid = state.bFilter === 'only' ? body.querySelectorAll('.pblk.no-b').length : state.bFilter === 'au' ? body.querySelectorAll('.pblk.no-au').length : 0;
+      st.textContent = (state.bFilter === 'only' || state.bFilter === 'au') ? (hid ? `ซ่อน ${tdig(hid)} ย่อหน้าที่ไม่ใช่พุทธพจน์` : 'แสดงเฉพาะช่วงพุทธพจน์') : '';
     } else {
       const total = body.querySelectorAll('.seg, .pr-row:not(.H)').length;
       const bud = body.querySelectorAll('.seg.B, .pr-row.B').length;
-      st.textContent = total ? `พระดำรัส ${tdig(bud)} / ${tdig(total)} ท่อน` : '';
+      const un = body.querySelectorAll('.seg.U, .pr-row.U').length;
+      st.textContent = total ? `พระดำรัส ${tdig(bud)}${un ? ` + ไม่ระบุผู้กล่าว ${tdig(un)}` : ''} / ${tdig(total)} ท่อน` : '';
     }
   };
   $('#bfltbar').querySelectorAll('[data-bf]').forEach(b => b.addEventListener('click', () => {
@@ -1232,6 +1278,12 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
     try{ localStorage.setItem('bv-bflt', state.bFilter); }catch(e){}
     applyBFilter();
   }));
+  const gltog = $('#glosstog');
+  if(gltog) gltog.addEventListener('change', () => {
+    state.hideGloss = gltog.checked;
+    try{ localStorage.setItem('bv-gloss', state.hideGloss ? '1' : '0'); }catch(e){}
+    applyBFilter();
+  });
   const entog = $('#entog');
   if(entog) entog.addEventListener('change', () => {
     state.showEn = entog.checked;
@@ -1243,15 +1295,25 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
     if(!cp) return;
     ev.stopPropagation();
     const sid = cp.dataset.cp;
-    const row = cp.closest('.pr-row') || cp.closest('.seg');
-    let txt = `[${sid}]`;
-    if(row){
-      const p = row.querySelector('.pp, .p')?.textContent?.trim() || '';
-      const t = row.querySelector('.tl')?.textContent?.trim() || '';
-      if(p) txt += ` ${p}`;
-      if(t && t !== '〃') txt += ` — “${t}”`;
+    const pblk = cp.closest('.pblk');
+    if(pblk){
+      const clone = pblk.cloneNode(true);
+      clone.querySelectorAll('.pid, .cpseg, .ppv, .gloss').forEach(el => el.remove());
+      const cleanTh = clone.textContent.replace(/\s+/g, ' ').trim();
+      navigator.clipboard?.writeText(`[${sid}] ${cleanTh}`);
+    } else {
+      const row = cp.closest('.pr-row') || cp.closest('.seg');
+      let txt = `[${sid}]`;
+      if(row){
+        const p = row.querySelector('.pp, .p')?.textContent?.trim() || '';
+        const tlEl = row.querySelector('.tl')?.cloneNode(true);
+        if(tlEl) tlEl.querySelectorAll('.gloss').forEach(el => el.remove());
+        const t = tlEl?.textContent?.trim() || '';
+        if(p) txt += ` ${p}`;
+        if(t && t !== '〃') txt += ` — “${t}”`;
+      }
+      navigator.clipboard?.writeText(txt);
     }
-    navigator.clipboard?.writeText(txt);
     const old = cp.textContent; cp.textContent = '✓ คัดลอกแล้ว'; cp.classList.add('ok');
     setTimeout(() => { cp.textContent = old; cp.classList.remove('ok'); }, 1200);
   });
@@ -1282,7 +1344,7 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
         if(sg.s === 'H' || sg.i.split(':')[1].startsWith('0.')) return;
         const c = cls(sg), sp = span[k], th = sp ? X.slice(sp[0], sp[1]).trim() : '';
         if(sp) h += headRows(sp[0]);
-        h += `<div class="pr-row ${c === 'B' ? 'B' : c === 'O' ? 'O' : 'N'}" data-k="${k}" id="pt-${esc(sg.i)}"><div class="pl"><span class="sid">${esc(sg.i)}${c !== 'B' && (whoLabel(sg) || [''])[0] ? ' · ' + esc((whoLabel(sg) || [''])[0]) : ''}${trnBadge((state.trnSeg || {})[sg.i])}<button type="button" class="cpseg" data-cp="${esc(sg.i)}" title="คัดลอกรหัสท่อนและข้อความบาลี–ไทย">คัดลอก</button></span><span class="pp">${esc(sg.p)}</span>${enMap[k]}</div><div class="tl" lang="th"${th ? ` data-o="${sp[0] + (X.slice(sp[0], sp[1]).match(/^\s*/)[0].length)}"` : ''}>${th ? thaiChunk(th, false) : '<span class="mg">〃</span>'}</div></div>`;
+        h += `<div class="pr-row ${c === 'B' ? 'B' : c === 'U' ? 'U' : c === 'O' ? 'O' : 'N'}" data-k="${k}" id="pt-${esc(sg.i)}"><div class="pl"><span class="sid">${esc(sg.i)}${c !== 'B' && (whoLabel(sg) || [''])[0] ? ' · ' + esc((whoLabel(sg) || [''])[0]) : ''}${trnBadge((state.trnSeg || {})[sg.i])}<button type="button" class="cpseg" data-cp="${esc(sg.i)}" title="คัดลอกรหัสท่อนและข้อความบาลี–ไทย">คัดลอก</button></span><span class="pp">${esc(sg.p)}</span>${enMap[k]}</div><div class="tl" lang="th"${th ? ` data-o="${sp[0] + (X.slice(sp[0], sp[1]).match(/^\s*/)[0].length)}"` : ''}>${th ? thaiChunk(th, false) : '<span class="mg">〃</span>'}</div></div>`;
       });
       body.innerHTML = h + '</div>' + (curSec!=null ? navHTML() : ''); bindNav();
       if(nTrn) markTrn(body, id, meta.th[1][0]);
@@ -1336,7 +1398,7 @@ async function showSutta(id, focusSeg, term, fromSearch, secN, focusTh){
           if(!txt.trim()) return;
           if(it.h){ h += `<div class="pblk hd"><span class="pid">หัวข้อที่ผู้แปลเติม · ไม่มีในบาลี</span>${thaiHTML(txt, term, null, it.a + lead)}</div>`; return; }
           const lab = it.keys.length > 1 ? `${id}:${it.keys[0]}–${it.keys[it.keys.length - 1]}` : `${id}:${it.key}`;
-          h += `<div class="pblk" data-pk="${esc(it.keys.join(' '))}" data-k="${it.k}"><button type="button" class="pid" data-sid="${esc(it.sid)}" title="ดูบาลีของย่อหน้านี้">${esc(lab)}${it.keys.length > 1 ? ` <span style="font-family:var(--f-thai)">(รวม ${tdig(it.keys.length)} ย่อหน้าสั้น)</span>` : ''}</button>${thaiHTML(txt, term, spans, it.a + lead)}<div class="ppv" hidden></div></div>`;
+          h += `<div class="pblk" data-pk="${esc(it.keys.join(' '))}" data-k="${it.k}"><div style="display:flex;align-items:center;gap:6px"><button type="button" class="pid" data-sid="${esc(it.sid)}" title="ดูบาลีของย่อหน้านี้">${esc(lab)}${it.keys.length > 1 ? ` <span style="font-family:var(--f-thai)">(รวม ${tdig(it.keys.length)} ย่อหน้าสั้น)</span>` : ''}</button><button type="button" class="cpseg" data-cp="${esc(lab)}" title="คัดลอกข้อความไทย (ตัดคำเสริมผู้แปลออก)">คัดลอก</button></div>${thaiHTML(txt, term, spans, it.a + lead)}<div class="ppv" hidden></div></div>`;
         });
         if(curSec!=null) h += navHTML();
       } else if(meta.sec && meta.sec.length > 1 && thUnits.length === 1){
@@ -1450,7 +1512,8 @@ async function search(){
       if(sg.s==='H') return;
       if(who==='A' && sg.l!=='A') return;
       if(who==='AU' && !(sg.l==='A' || sg.s===UNATTR)) return;
-      if(who==='AB' && !(sg.l==='A'||sg.l==='B?')) return;
+      if(who==='AB' && !(sg.l==='A' || sg.l==='B?' || sg.s===UNATTR)) return;
+      if(who==='uncertain' && !(sg.l==='B?' || sg.s===UNATTR || sg.s==='?' || (sg.s && sg.s.startsWith('unknown')))) return;
       const hay = lang==='p' ? fold(sg.p) : fold(sg.e);
       if(ft.every(t => hay.includes(t))) hits.push(sg);
     });
@@ -1504,7 +1567,7 @@ async function searchThai(raw, who){
   const t = qThai(raw);
   const out = []; let total = 0, filtered = 0;
   await Promise.all(SPKVOLS.map(loadSpk));
-  const okCode = c => who==='all' || c==='B' || (who==='AB' && c==='?');
+  const okCode = c => who==='all' || (who==='A' ? c==='B' : who==='AU' ? (c==='B'||c==='U') : who==='AB' ? (c==='B'||c==='U'||c==='?') : (c==='U'||c==='?'));
   for(const v of THVOLS){
     const arr = state.thai[v];
     const SP = state.spk[v] || null;
@@ -1514,7 +1577,13 @@ async function searchThai(raw, who){
       let pos = n.indexOf(t); if(pos === -1) return;
       const sc = u.sc.map(id => state.byId[id]).filter(Boolean);
       const spans = SP ? SP[i] : null;
-      if(who!=='all' && !spans){ const hasB = sc.some(m => m.b>0 || (who!=='A' && m.u>0)); if(sc.length && !hasB) return; }
+      const noSpans = !spans;
+      if(who!=='all' && noSpans){
+        const matchMeta = who==='uncertain'
+          ? sc.some(m => m.bq>0 || m.u>0)
+          : sc.some(m => m.b>0 || (who!=='A' && (m.u>0 || (who==='AB' && m.bq>0))));
+        if(sc.length && !matchMeta) return;
+      }
       const metaS = sc.length===1 && sc[0].sec && sc[0].sec.length>1 ? sc[0] : null;
       const groups = new Map();
       while(pos !== -1){
@@ -1530,20 +1599,21 @@ async function searchThai(raw, who){
         const s0 = Math.max(0, a-90), s1 = Math.min(u.x.length, b+110);
         const snip = (s0>0?'…':'') + esc(u.x.slice(s0,a)) + '<mark>' + esc(u.x.slice(a,b)) + '</mark>' + esc(u.x.slice(b,s1)) + (s1<u.x.length?'…':'');
         const tn = (TU[v + ':' + i] || []).filter(x => x[1] > s0 && x[0] < s1), hitN = tn.some(x => x[1] > a && x[0] < b);
-        out.push({v, u, sc, cnt: g.cnt, snip, tn, hitN, code: g.code, sec: key>=0 ? key : null, secT: key>=0 ? secTitle(metaS.sec[key], key) : null});
+        out.push({v, u, sc, cnt: g.cnt, snip, tn, hitN, code: g.code, noSpans, sec: key>=0 ? key : null, secT: key>=0 ? secTitle(metaS.sec[key], key) : null});
       });
     });
   }
   const titleHits = matchSuttaTitles(raw);
   const tNote = titleHits.length ? `พบชื่อพระสูตรตรงกัน ${tdig(titleHits.length)} สูตร · ` : '';
-  $('#status').textContent = (out.length || titleHits.length) ? `${tNote}${out.length ? `เนื้อความพบ ${tdig(total)} แห่ง ใน ${tdig(out.length)} ตอน${who==='A'?' (เฉพาะสูตรที่มีพระดำรัส)':who==='AU'?' (สูตรที่มีพระดำรัส หรือคาถาที่ไม่ระบุผู้กล่าว)':''}${filtered?` · กรองรายประโยค: ตัดออก ${tdig(filtered)} แห่งที่ไม่ใช่พระดำรัส${who==='AB'?'':' (รวมที่ยังไม่ระบุ)'}`:''}` : 'ไม่พบในเนื้อความ'}` : 'ไม่พบ ลองพิมพ์คำให้สั้นลง หรือสะกดอีกแบบ (ฉบับหลวงใช้ตัวสะกดเก่าบางคำ เช่น ทิฐิ)';
+  $('#status').textContent = (out.length || titleHits.length) ? `${tNote}${out.length ? `เนื้อความพบ ${tdig(total)} แห่ง ใน ${tdig(out.length)} ตอน` : 'ไม่พบในเนื้อความ'}${filtered?` · กรองรายประโยค: ตัดออก ${tdig(filtered)} แห่งที่ไม่ตรงเงื่อนไข`:''}` : 'ไม่พบ ลองพิมพ์คำให้สั้นลง หรือสะกดอีกแบบ (ฉบับหลวงใช้ตัวสะกดเก่าบางคำ เช่น ทิฐิ)';
   let html = '<div class="res">' + renderTitleHits(titleHits);
   out.slice(0,150).forEach(r => {
     const id = r.sc[0] ? r.sc[0].id : null;
     const where = `ฉบับหลวง เล่ม ${tdig(r.v)}${r.u.pg?` หน้า ${tdig(r.u.pg[0])}`:''}${r.u.k?` ข้อ ${tdig(r.u.k[0])}${r.u.k[1]!==r.u.k[0]?'–'+tdig(r.u.k[1]):''}`:''}`;
     const pct = r.sc[0] && r.sc[0].n ? Math.round(100*r.sc[0].b/r.sc[0].n) : null;
+    const spkTag = r.code ? ` · <span class="spk">ผู้พูด: ${SPKNAME[r.code]}</span>` : r.noSpans ? ` · <span class="spk" style="color:var(--warn)" title="หน่วยข้อความนี้ยังไม่มีป้ายผู้พูดรายประโยคในฐานข้อมูล">⚠ ยังไม่มีป้ายรายประโยค (กรองระดับสูตร)</span>` : '';
     html += `<section class="card rs"><h3>${id?`<a href="#${toHash(id)}" data-term="1"${r.sec!=null?` data-sec="${r.sec}"`:''}>${esc(r.u.t||'(ไม่มีชื่อ)')}${r.secT?` · ตอน ${esc(r.secT)}`:''}</a>`:esc(r.u.t||'(ไม่มีชื่อ)')}</h3>
-      <div class="where">${where}${id?` · ${label(id)}`:''}${r.sec!=null?` · ตอนที่ ${tdig(r.sec)}`:''}${pct!==null&&r.sec==null?` · พระดำรัส ${pct}%`:''}${r.sec!=null&&r.sc[0].sec?` · ตอนนี้พระดำรัส ${r.sc[0].sec[r.sec].b}%`:''}${r.cnt>1?` · พบ ${tdig(r.cnt)} แห่งในตอนนี้`:''}${r.code?` · <span class="spk">ผู้พูด: ${SPKNAME[r.code]}</span>`:''}</div>
+      <div class="where">${where}${id?` · ${label(id)}`:''}${r.sec!=null?` · ตอนที่ ${tdig(r.sec)}`:''}${pct!==null&&r.sec==null?` · พระดำรัส ${pct}%`:''}${r.sec!=null&&r.sc[0].sec?` · ตอนนี้พระดำรัส ${r.sc[0].sec[r.sec].b}%`:''}${r.cnt>1?` · พบ ${tdig(r.cnt)} แห่งในตอนนี้`:''}${spkTag}</div>
       <p class="snip">${r.snip}</p>${r.tn && r.tn.length ? `<div class="trnflag ${r.tn.some(x => x[2].sev === 'high') ? 'high' : 'mid'}">※ ${r.hitN ? 'คำที่ค้นอยู่ในจุดที่มีหมายเหตุคำแปล' : 'ข้อความนี้มีหมายเหตุคำแปล'}: ${[...new Map(r.tn.map(x => [x[2].id, x])).values()].slice(0, 3).map(x => `<button type="button" data-trn="${esc(x[2].id)}" data-trs="${esc(x[3])}">“${esc(x[2].th)}” · ${esc(TRNS[x[2].sev] || '')}</button>`).join(' ')}</div>` : ''}</section>`;
   });
   if(out.length>150) html += `<div class="status">แสดง ๑๕๐ ตอนแรก เพิ่มคำค้นให้เจาะจงขึ้น</div>`;
@@ -1564,7 +1634,7 @@ function home(){
       <button type="button" data-q="สัมมัตตนิยาม">สัมมัตตนิยาม</button>
       <button type="button" data-q="อนุสัย">อนุสัย</button>
     </div>
-    <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><a href="#snote" class="pill b" style="text-decoration:none;font-size:.92rem;padding:5px 12px">Short note: ทานในพุทธพจน์ (ฉบับ ๓) · ๙ ส่วน ๕๗ พระสูตร →</a><a href="#trn" class="pill trnp" style="text-decoration:none;font-size:.92rem;padding:5px 12px">หมายเหตุคำแปลฉบับหลวง →</a></p>
+    <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><a href="#snote" id="homeSnoteBtn" class="pill b" style="text-decoration:none;font-size:.92rem;padding:5px 12px">Short note พุทธพจน์ →</a><a href="#trn" class="pill trnp" style="text-decoration:none;font-size:.92rem;padding:5px 12px">หมายเหตุคำแปลฉบับหลวง →</a></p>
     <details class="help"><summary>ข้อมูลนี้มาจากไหน และเชื่อได้แค่ไหน</summary><ul>
       <li>ภาษาไทย: พระไตรปิฎกฉบับหลวง เล่ม ๙–๑๑ (ทีฆนิกาย) ๑๒–๑๔ (มัชฌิมนิกาย) ๑๕–๑๙ (สังยุตตนิกาย) และ ๒๐–๒๔ (อังคุตตรนิกาย) แปลงจาก PDF แก้การเข้ารหัสฟอนต์และวรรณยุกต์เคลื่อนแล้ว อาจยังเหลือคำเพี้ยนเล็กน้อย</li>
       <li>บาลี: ฉบับ Mahāsaṅgīti และคำแปลอังกฤษของ Bhikkhu Sujato จาก SuttaCentral (CC0) ใช้เป็นตัวบทตัดสินและใช้ระบุผู้พูด</li>
@@ -1573,6 +1643,13 @@ function home(){
       <li>สีผู้พูดเดาอัตโนมัติจากบาลี B? = มีสัญญาณการรับรอง (เช่น "สาธุ สาธุ") ต้องอ่านบริบทก่อนจัดเป็น Level B ส่วน Level C ไม่ได้ติดป้าย</li>
     </ul></details></div>`;
   $('#main').querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { $('#q').value=b.dataset.q; $('#lang').value='th'; $('#who').value='all'; search(); }));
+  (NS.list ? Promise.resolve(NS.list) : getJSON('data/snotes.json').then(d => (NS.list = d)).catch(() => [])).then(list => {
+    const btn = $('#homeSnoteBtn');
+    if(btn && list && list[0]){
+      const n = list[0];
+      btn.textContent = `Short note: ${n.title} (ฉบับ ${tdig(n.version || 4)}) · ${tdig(n.sections)} ส่วน ${tdig(n.suttas)} พระสูตร →`;
+    }
+  });
 }
 
 async function routeSeg(base, seg, th){
@@ -1599,8 +1676,15 @@ function setView(v){
 }
 
 const nst = {data:null, id:null};
-const LVT = {A:'พระดำรัสโดยตรง', B:'ผู้อื่นกล่าว · ทรงรับรองชัดแจ้ง', BP:'ผู้อื่นกล่าว · ทรงรับรองชัดแจ้ง', C:'คำสาวก · รับรองโดยบริบท', U:'ไม่ระบุผู้กล่าวในตัวบท', R:'ห้องสนทนาเรียบเรียง/เชื่อมเอง ไม่ใช่พระดำรัส'};
-const lvB = lv => lv ? `<span class="lv ${lv}" title="${esc(LVT[lv] || '')}">${({A:'A', B:'B', BP:'B', C:'C', U:'⚪', R:'ห้อง'})[lv] || lv}</span>` : '';
+const LVT = {
+  A: '🟢 Level A — พระดำรัสโดยตรง: พระผู้มีพระภาคทรงเป็นผู้ตรัสเอง เป็นฐานหลักของคำตอบได้',
+  B: '🟢 Level B — คำสาวกที่ทรงรับรองชัดแจ้ง: ข้อความเดิมเป็นคำของสาวก แต่พระพุทธเจ้าทรงรับรองชัดแจ้ง ห้ามนำเสนอเหมือนพระดำรัสตั้งแต่ต้น',
+  BP: '🟢 Level B — คำสาวกที่ทรงรับรองชัดแจ้ง: ข้อความเดิมเป็นคำของสาวก แต่พระพุทธเจ้าทรงรับรองชัดแจ้ง ห้ามนำเสนอเหมือนพระดำรัสตั้งแต่ต้น',
+  C: '⚠️ Level C — สาวกเป็นผู้กล่าว พระพุทธเจ้าประทับอยู่ด้วยและไม่ปรากฏการตรัสทัดทาน ไม่มีคำรับรองโดยตรง (ห้ามให้น้ำหนักเท่า A หรือ B)',
+  U: '⚪ ไม่ระบุผู้กล่าวในตัวบท — ถือเป็นพุทธพจน์ตามการรวบรวมของคัมภีร์เท่านั้น ไม่ใช่ระดับ A',
+  R: 'ห้องสนทนาเรียบเรียง/เชื่อมความเอง — ไม่ใช่พระดำรัส'
+};
+const lvB = lv => lv ? `<button type="button" class="lv ${lv}" data-lv="${lv}" title="${esc(LVT[lv] || '')}">${({A:'A', B:'B', BP:'B', C:'C', U:'⚪', R:'ห้อง'})[lv] || lv}</button>` : '';
 const segTail = r => { const a = r.seg.split(':')[1], b = r.to && r.to !== r.seg ? r.to.split(':')[1] : ''; return b ? `${a}–${b}` : a; };
 function flashBox(el){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
 
@@ -2125,6 +2209,15 @@ function renderSnote(){
         ${C.basis ? `<p class="s3basis">${s3sent(C.basis)}</p>` : ''}
         <details class="s3ld"><summary>เส้นในแผนภาพมาจากไหน (${tdig(C.links.length)} เส้น)</summary>${core.leg}</details></div>
     </div>
+    <div class="bfltbar" id="snFltBar" style="margin:12px 0">
+      <span class="lbl">กรองชั้นข้อความ:</span>
+      <span class="bfltgrp" role="group" aria-label="กรองชั้นข้อความใน Short note">
+        <button type="button" data-snf="all" class="on">แสดงทั้งหมด</button>
+        <button type="button" data-snf="dim-r">หรี่ส่วนห้องเรียบเรียง (R)</button>
+        <button type="button" data-snf="only-p">เน้นเฉพาะพุทธพจน์ (A · B · ⚪)</button>
+      </span>
+      <span style="font-size:.78rem">กดที่ป้ายระดับหลักฐาน (A / B / C / ⚪) เพื่อดูคำเตือนเต็ม</span>
+    </div>
     <nav class="s3toc" aria-label="สารบัญ">${toc}<a href="#" data-go="close" style="--c:var(--accent)">ปิดท้าย</a></nav>
     ${M.sections.map(sec).join('')}
     ${(M.user_views || []).length ? `<div class="s3uv"><b>มุมมองของผู้ศึกษา (ไม่ใช่พุทธพจน์)</b>${M.user_views.map(v => `<p>${esc(v.t)}${v.check ? `<span class="s3uvc">ห้องสนทนาตรวจแล้ว: ${esc(v.check)}</span>` : ''}${rcHTML(v.ref)}</p>`).join('')}</div>` : ''}
@@ -2152,6 +2245,13 @@ function renderSnote(){
   nv.querySelectorAll('.s3lb').forEach(g => g.addEventListener('click', () => { const d = nv.querySelector('.s3ld'); d.open = true; const li = d.querySelector(`li[data-l="${g.dataset.l}"]`); if(li){ li.scrollIntoView({behavior:'smooth', block:'nearest'}); flashBox(li); } }));
   bindRefs(nv);
   $('#nscrim').onclick = closeSutta;
+  nv.querySelectorAll('#snFltBar [data-snf]').forEach(b => b.addEventListener('click', () => {
+    const s3 = nv.querySelector('.s3'), mode = b.dataset.snf;
+    s3.classList.remove('sn-dim-r', 'sn-only-p');
+    if(mode === 'dim-r') s3.classList.add('sn-dim-r');
+    if(mode === 'only-p') s3.classList.add('sn-only-p');
+    nv.querySelectorAll('#snFltBar [data-snf]').forEach(x => x.classList.toggle('on', x === b));
+  }));
   drawSame();
 }
 
